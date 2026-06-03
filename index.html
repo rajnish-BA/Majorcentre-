@@ -259,6 +259,7 @@ textarea.fc{height:64px;padding:7px 9px;resize:none;}
 ::-webkit-scrollbar-thumb{background:#ccc;border-radius:3px;}
 
 /* CONSOLIDATED REPORT */
+.fbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:12px;}
 .adv-btn{height:32px;background:#fff;border:1px solid #ccc;border-radius:3px;padding:0 13px;font-size:12px;cursor:pointer;display:flex;align-items:center;gap:5px;color:#444;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;}
 .adv-dot{width:8px;height:8px;border-radius:50%;background:#2ecc71;display:inline-block;}
 .clear-btn{background:none;border:none;font-size:12px;color:var(--brand);cursor:pointer;font-weight:600;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;}
@@ -344,9 +345,9 @@ textarea.fc{height:64px;padding:7px 9px;resize:none;}
     </div>
     <div class="nc" id="nc-rep">
       <div class="nch" id="nc-cons-report" onclick="go('cons-report')">Department Wise Report</div>
-      <div class="nch">Sewaname Wise Report</div>
-      <div class="nch">Area Wise Report</div>
-      <div class="nch">MC Zone Reports</div>
+      <div class="nch" onclick="showToast('Sewaname Wise Report — coming soon.')">Sewaname Wise Report</div>
+      <div class="nch" onclick="showToast('Area Wise Report — coming soon.')">Area Wise Report</div>
+      <div class="nch" onclick="showToast('MC Zone Reports — coming soon.')">MC Zone Reports</div>
     </div>
   </div>
 </div>
@@ -406,17 +407,17 @@ textarea.fc{height:64px;padding:7px 9px;resize:none;}
       <div class="fb"><input class="inp" style="width:180px" placeholder="Search name / code..."><select class="sel"><option>Zone III</option></select><select class="sel"><option>All States</option><option>Punjab</option><option>Gujarat</option><option>Bihar</option><option>Nepal</option><option>UK</option><option>USA</option></select><select class="sel"><option>All Status</option><option>Active</option><option>Inactive</option></select><button class="bs">Search</button><button class="br">Reset</button></div>
       <div class="tw"><table class="t"><thead><tr><th>#</th><th>MC Code</th><th>Major Centre Name</th><th>Zone</th><th>State/Country</th><th>File No.</th><th>Link Centres</th><th>Depts</th><th>Status</th><th>Actions</th></tr></thead>
       <tbody>
-        <tr><td>1</td><td>MC-001</td><td><b>Adipur MC</b></td><td>Zone III</td><td>Gujarat</td><td>AD/2022/001</td><td><span class="pill pb2">2</span></td><td><span class="pill pa">3</span></td><td><span class="pill pa">Active</span></td><td><button class="ba">Edit</button><button class="ba">View</button><button class="ba d">Del</button></td></tr>
-        <tr><td>2</td><td>MC-002</td><td><b>Bhati MC</b></td><td>Zone III</td><td>Punjab</td><td>BH/2023/002</td><td><span class="pill pb2">1</span></td><td><span class="pill pa">4</span></td><td><span class="pill pa">Active</span></td><td><button class="ba">Edit</button><button class="ba">View</button><button class="ba d">Del</button></td></tr>
-        <tr><td>3</td><td>MC-003</td><td><b>Dera Ghazi Khan MC</b></td><td>Zone III</td><td>Punjab (PK)</td><td>DG/2023/003</td><td><span class="pill pb2">1</span></td><td><span class="pill pp">2</span></td><td><span class="pill pa">Active</span></td><td><button class="ba">Edit</button><button class="ba">View</button><button class="ba d">Del</button></td></tr>
-        <tr><td>4</td><td>MC-004</td><td><b>Haynes Park MC</b></td><td>Zone III</td><td>UK</td><td>HP/2023/004</td><td><span class="pill pb2">3</span></td><td><span class="pill pa">5</span></td><td><span class="pill pa">Active</span></td><td><button class="ba" onclick="openM('m-edit-mc')">Edit</button><button class="ba" onclick="openM('m-view-mc')">View</button><button class="ba d" onclick="openM('m-del')">Del</button></td></tr>
-        <tr><td>5</td><td>MC-005</td><td><b>Kathmandu MC</b></td><td>Zone III</td><td>Nepal</td><td>KT/2024/005</td><td><span class="pill pb2">2</span></td><td><span class="pill pa">4</span></td><td><span class="pill pa">Active</span></td><td><button class="ba">Edit</button><button class="ba">View</button><button class="ba d">Del</button></td></tr>
-        <tr><td>6</td><td>MC-006</td><td><b>Nabha MC</b></td><td>Zone III</td><td>Punjab</td><td>NB/2022/006</td><td><span class="pill pb2">4</span></td><td><span class="pill pa">5</span></td><td><span class="pill pa">Active</span></td><td><button class="ba">Edit</button><button class="ba">View</button><button class="ba d">Del</button></td></tr>
-        <tr><td>7</td><td>MC-007</td><td><b>Paror MC</b></td><td>Zone III</td><td>Bihar</td><td>PR/2024/007</td><td><span class="pill pb2">1</span></td><td><span class="pill pp">2</span></td><td><span class="pill pa">Active</span></td><td><button class="ba">Edit</button><button class="ba">View</button><button class="ba d">Del</button></td></tr>
-        <tr><td>8</td><td>MC-008</td><td><b>Peach Tree MC</b></td><td>Zone III</td><td>USA</td><td>PT/2023/008</td><td><span class="pill pb2">2</span></td><td><span class="pill pa">3</span></td><td><span class="pill pa">Active</span></td><td><button class="ba">Edit</button><button class="ba">View</button><button class="ba d">Del</button></td></tr>
-        <tr><td>9</td><td>MC-009</td><td><b>Rudrapur MC</b></td><td>Zone III</td><td>Uttarakhand</td><td>RD/2024/009</td><td><span class="pill pb2">1</span></td><td><span class="pill pp">2</span></td><td><span class="pill pa">Active</span></td><td><button class="ba">Edit</button><button class="ba">View</button><button class="ba d">Del</button></td></tr>
-        <tr><td>10</td><td>MC-010</td><td><b>Sherghati MC</b></td><td>Zone III</td><td>Bihar</td><td>SG/2024/010</td><td><span class="pill pb2">1</span></td><td><span class="pill pp">1</span></td><td><span class="pill pa">Active</span></td><td><button class="ba">Edit</button><button class="ba">View</button><button class="ba d">Del</button></td></tr>
-        <tr><td>11</td><td>MC-011</td><td><b>Sikanderpur MC</b></td><td>Zone III</td><td>Punjab</td><td>SK/2024/011</td><td><span class="pill pi">0</span></td><td><span class="pill pi">0</span></td><td><span class="pill pi">Inactive</span></td><td><button class="ba">Edit</button><button class="ba">View</button><button class="ba d">Del</button></td></tr>
+        <tr><td>1</td><td>MC-001</td><td><b>Adipur MC</b></td><td>Zone III</td><td>Gujarat</td><td>AD/2022/001</td><td><span class="pill pb2">2</span></td><td><span class="pill pa">3</span></td><td><span class="pill pa">Active</span></td><td><button class="ba" onclick="openM('m-edit-mc')">Edit</button><button class="ba" onclick="openM('m-view-mc')">View</button><button class="ba d" onclick="openDelModal('Adipur MC')">Del</button></td></tr>
+        <tr><td>2</td><td>MC-002</td><td><b>Bhati MC</b></td><td>Zone III</td><td>Punjab</td><td>BH/2023/002</td><td><span class="pill pb2">1</span></td><td><span class="pill pa">4</span></td><td><span class="pill pa">Active</span></td><td><button class="ba" onclick="openM('m-edit-mc')">Edit</button><button class="ba" onclick="openM('m-view-mc')">View</button><button class="ba d" onclick="openDelModal('Bhati MC')">Del</button></td></tr>
+        <tr><td>3</td><td>MC-003</td><td><b>Dera Ghazi Khan MC</b></td><td>Zone III</td><td>Punjab (PK)</td><td>DG/2023/003</td><td><span class="pill pb2">1</span></td><td><span class="pill pp">2</span></td><td><span class="pill pa">Active</span></td><td><button class="ba" onclick="openM('m-edit-mc')">Edit</button><button class="ba" onclick="openM('m-view-mc')">View</button><button class="ba d" onclick="openDelModal('Dera Ghazi Khan MC')">Del</button></td></tr>
+        <tr><td>4</td><td>MC-004</td><td><b>Haynes Park MC</b></td><td>Zone III</td><td>UK</td><td>HP/2023/004</td><td><span class="pill pb2">3</span></td><td><span class="pill pa">5</span></td><td><span class="pill pa">Active</span></td><td><button class="ba" onclick="openM('m-edit-mc')">Edit</button><button class="ba" onclick="openM('m-view-mc')">View</button><button class="ba d" onclick="openDelModal('Haynes Park MC')">Del</button></td></tr>
+        <tr><td>5</td><td>MC-005</td><td><b>Kathmandu MC</b></td><td>Zone III</td><td>Nepal</td><td>KT/2024/005</td><td><span class="pill pb2">2</span></td><td><span class="pill pa">4</span></td><td><span class="pill pa">Active</span></td><td><button class="ba" onclick="openM('m-edit-mc')">Edit</button><button class="ba" onclick="openM('m-view-mc')">View</button><button class="ba d" onclick="openDelModal('Kathmandu MC')">Del</button></td></tr>
+        <tr><td>6</td><td>MC-006</td><td><b>Nabha MC</b></td><td>Zone III</td><td>Punjab</td><td>NB/2022/006</td><td><span class="pill pb2">4</span></td><td><span class="pill pa">5</span></td><td><span class="pill pa">Active</span></td><td><button class="ba" onclick="openM('m-edit-mc')">Edit</button><button class="ba" onclick="openM('m-view-mc')">View</button><button class="ba d" onclick="openDelModal('Nabha MC')">Del</button></td></tr>
+        <tr><td>7</td><td>MC-007</td><td><b>Paror MC</b></td><td>Zone III</td><td>Bihar</td><td>PR/2024/007</td><td><span class="pill pb2">1</span></td><td><span class="pill pp">2</span></td><td><span class="pill pa">Active</span></td><td><button class="ba" onclick="openM('m-edit-mc')">Edit</button><button class="ba" onclick="openM('m-view-mc')">View</button><button class="ba d" onclick="openDelModal('Paror MC')">Del</button></td></tr>
+        <tr><td>8</td><td>MC-008</td><td><b>Peach Tree MC</b></td><td>Zone III</td><td>USA</td><td>PT/2023/008</td><td><span class="pill pb2">2</span></td><td><span class="pill pa">3</span></td><td><span class="pill pa">Active</span></td><td><button class="ba" onclick="openM('m-edit-mc')">Edit</button><button class="ba" onclick="openM('m-view-mc')">View</button><button class="ba d" onclick="openDelModal('Peach Tree MC')">Del</button></td></tr>
+        <tr><td>9</td><td>MC-009</td><td><b>Rudrapur MC</b></td><td>Zone III</td><td>Uttarakhand</td><td>RD/2024/009</td><td><span class="pill pb2">1</span></td><td><span class="pill pp">2</span></td><td><span class="pill pa">Active</span></td><td><button class="ba" onclick="openM('m-edit-mc')">Edit</button><button class="ba" onclick="openM('m-view-mc')">View</button><button class="ba d" onclick="openDelModal('Rudrapur MC')">Del</button></td></tr>
+        <tr><td>10</td><td>MC-010</td><td><b>Sherghati MC</b></td><td>Zone III</td><td>Bihar</td><td>SG/2024/010</td><td><span class="pill pb2">1</span></td><td><span class="pill pp">1</span></td><td><span class="pill pa">Active</span></td><td><button class="ba" onclick="openM('m-edit-mc')">Edit</button><button class="ba" onclick="openM('m-view-mc')">View</button><button class="ba d" onclick="openDelModal('Sherghati MC')">Del</button></td></tr>
+        <tr><td>11</td><td>MC-011</td><td><b>Sikanderpur MC</b></td><td>Zone III</td><td>Punjab</td><td>SK/2024/011</td><td><span class="pill pi">0</span></td><td><span class="pill pi">0</span></td><td><span class="pill pi">Inactive</span></td><td><button class="ba" onclick="openM('m-edit-mc')">Edit</button><button class="ba" onclick="openM('m-view-mc')">View</button><button class="ba d" onclick="openDelModal('Sikanderpur MC')">Del</button></td></tr>
       </tbody></table></div>
       <div class="pagi"><span>Showing all 11 records</span><div class="pgb-wrap"><div class="pgb">&#8249;</div><div class="pgb on">1</div><div class="pgb">&#8250;</div></div></div>
     </div>
@@ -644,7 +645,7 @@ textarea.fc{height:64px;padding:7px 9px;resize:none;}
 <div class="mbg" id="m-add-dept"><div class="mbox sm"><div class="mhdr"><h5>Add MC Department</h5><button class="mcls" onclick="closeM('m-add-dept')">&#215;</button></div><div class="mbdy"><div class="fr fr2"><div class="fg"><label class="fl">Code <span class="req">*</span></label><input class="fc" placeholder="MCD-06"></div><div class="fg"><label class="fl">Name <span class="req">*</span></label><input class="fc" placeholder="Department name"></div></div><div class="fr fr1"><div class="fg"><label class="fl">Applicable MCs</label><select class="fc"><option>All Major Centres</option><option>Kathmandu MC</option><option>Nabha MC</option><option>Bhati MC</option></select></div></div><div class="togr"><div class="tog on" onclick="this.classList.toggle('on')"></div><span style="font-size:12px;color:#555;">Active</span></div></div><div class="mftr"><button class="btn btn-p">ADD</button><button class="btn btn-s" onclick="closeM('m-add-dept')">CANCEL</button></div></div></div>
 <div class="mbg" id="m-add-sewa"><div class="mbox sm"><div class="mhdr"><h5>Add MC Sewa Name</h5><button class="mcls" onclick="closeM('m-add-sewa')">&#215;</button></div><div class="mbdy"><div class="fr fr2"><div class="fg"><label class="fl">Sewa Name <span class="req">*</span></label><input class="fc" placeholder="Enter sewa name"></div><div class="fg"><label class="fl">MC Department <span class="req">*</span></label><select class="fc"><option value="">— Select —</option><option>Langar Seva</option><option>Satsang Management</option><option>Medical Sewa</option></select></div></div><div class="fr fr2"><div class="fg"><label class="fl">Type <span class="req">*</span></label><select class="fc"><option>Physical</option><option>Technical</option><option>Administrative</option><option>Medical</option></select></div><div class="fg"><label class="fl">Status</label><div class="togr" style="margin-top:8px;"><div class="tog on" onclick="this.classList.toggle('on')"></div><span style="font-size:12px;color:#555;">Active</span></div></div></div></div><div class="mftr"><button class="btn btn-p">ADD</button><button class="btn btn-s" onclick="closeM('m-add-sewa')">CANCEL</button></div></div></div>
 <div class="mbg" id="m-add-user"><div class="mbox"><div class="mhdr"><h5>Add User</h5><button class="mcls" onclick="closeM('m-add-user')">&#215;</button></div><div class="mbdy"><div class="ssep">User Details</div><div class="fr fr2"><div class="fg"><label class="fl">Full Name <span class="req">*</span></label><input class="fc" placeholder="Full name"></div><div class="fg"><label class="fl">Email <span class="req">*</span></label><input class="fc" type="email" placeholder="user@srs.org"></div></div><div class="fr fr2"><div class="fg"><label class="fl">Password <span class="req">*</span></label><input class="fc" type="password"></div><div class="fg"><label class="fl">Phone</label><input class="fc" placeholder="+91 XXXXXXXXXX"></div></div><div class="ssep">Role &amp; Assignment</div><div class="fr fr2"><div class="fg"><label class="fl">Role <span class="req">*</span></label><select class="fc" onchange="document.getElementById('mcaf').style.display=this.value==='mc'?'flex':'none'"><option value="">— Select Role —</option><option>Admin</option><option>Beas User</option><option value="mc">Major Centre User</option><option>Report Viewer</option></select></div><div class="fg" id="mcaf" style="display:none;"><label class="fl">Assign Major Centre <span class="req">*</span></label><select class="fc"><option value="">— Select MC —</option><option>Adipur MC</option><option>Bhati MC</option><option>Haynes Park MC</option><option>Kathmandu MC</option><option>Nabha MC</option><option>Paror MC</option><option>Peach Tree MC</option><option>Rudrapur MC</option><option>Sherghati MC</option></select></div></div><div class="togr"><div class="tog on" onclick="this.classList.toggle('on')"></div><span style="font-size:12px;color:#555;">Active</span></div></div><div class="mftr"><button class="btn btn-p">ADD</button><button class="btn btn-s" onclick="closeM('m-add-user')">CANCEL</button></div></div></div>
-<div class="mbg" id="m-del"><div class="mbox sm"><div class="mhdr"><h5>Confirm Deletion</h5><button class="mcls" onclick="closeM('m-del')">&#215;</button></div><div class="mbdy" style="padding:0 20px 16px;font-size:13px;">Are you sure you want to delete <b>Haynes Park MC</b>? This action cannot be undone.</div><div class="mftr"><button class="btn btn-p" onclick="closeM('m-del')">Confirm</button><button class="btn btn-s" onclick="closeM('m-del')">Cancel</button></div></div></div>
+<div class="mbg" id="m-del"><div class="mbox sm"><div class="mhdr"><h5>Confirm Deletion</h5><button class="mcls" onclick="closeM('m-del')">&#215;</button></div><div class="mbdy" style="padding:0 20px 16px;font-size:13px;">Are you sure you want to delete <b id="del-name"></b>? This action cannot be undone.</div><div class="mftr"><button class="btn btn-p" onclick="closeM('m-del')">Confirm</button><button class="btn btn-s" onclick="closeM('m-del')">Cancel</button></div></div></div>
 
 </div></div><!-- /app /cvs -->
 
@@ -682,8 +683,10 @@ const MC_SCREENS=['mc-list','mc-dept','mc-sewa'];
 let cRole='zonal', cSc='mc-list';
 
 function go(id){
+  const realId=id;
   if(cRole!=='zonal'&&MC_SCREENS.includes(id)){id='no-access';}
-  const c=SC[id];if(!c)return;cSc=id;
+  const c=SC[id];if(!c)return;
+  cSc=realId; // track intended screen, not the no-access redirect
   // hide all screens
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   const el=document.getElementById('sc-'+id);if(el)el.classList.add('active');
@@ -697,10 +700,10 @@ function go(id){
   document.querySelectorAll('.nch').forEach(n=>n.classList.remove('active'));
   document.querySelectorAll('.ns').forEach(n=>n.classList.remove('active'));
   if(c.nav){const n=document.getElementById(c.nav);if(n)n.classList.add('active');}
-  // open the right accordion
+  // accordion: always reset first, then open for current screen
+  document.querySelectorAll('.nc').forEach(n=>n.classList.remove('show'));
+  document.querySelectorAll('.nt').forEach(n=>n.classList.remove('open'));
   if(c.acc){
-    document.querySelectorAll('.nc').forEach(n=>n.classList.remove('show'));
-    document.querySelectorAll('.nt').forEach(n=>n.classList.remove('open'));
     const nc=document.getElementById('nc-'+c.acc);
     const nt=document.getElementById('nt-'+c.acc);
     if(nc)nc.classList.add('show');
@@ -709,7 +712,7 @@ function go(id){
   if(id==='dashboard')document.getElementById('ns-dash').classList.add('active');
   // init period manager when navigating to it
   if(id==='period')pmInit();
-  if(id==='cons-report'){crRenderTable('all');}
+  if(id==='cons-report'){crRenderTable('all');crUpdateTitle('all');}
 }
 
 function acc(k){
@@ -724,6 +727,7 @@ function acc(k){
 
 function openM(id){document.getElementById(id).classList.add('show');}
 function closeM(id){document.getElementById(id).classList.remove('show');}
+function openDelModal(name){document.getElementById('del-name').textContent=name;openM('m-del');}
 document.querySelectorAll('.mbg').forEach(b=>b.addEventListener('click',e=>{if(e.target===b)b.classList.remove('show');}));
 
 
@@ -925,8 +929,8 @@ function pmRenderCal(){
       const pk=`${pmMode}-${pmYear}-${m}-${d}`;
       const pt=pmData[pk];
       const pObj=pt?PM_TYPES[pmMode].find(x=>x.key===pt):null;
-      let style=pObj&&!isPast?`background:${pObj.bg};color:${pObj.c};`:'';
-      if(isPast)style='color:#ccc;';
+      let style=pObj?`background:${pObj.bg};color:${pObj.c};${isPast?'opacity:.4;':''}`:'';
+      if(isPast&&!pObj)style='color:#ccc;';
       let cls='cd';
       if(isPast)cls+=' past';
       if(isToday)cls+=' today';
@@ -1074,9 +1078,11 @@ function crResetAll(){
   document.getElementById('lt-sel').value='all';
   onListTypeChange('all');crLT='all';
   crRenderTable('all');
+  crUpdateTitle('all');
   document.getElementById('chip-lt').innerHTML='List Type : All <span class="fx">&#215;</span>';
-  document.getElementById('cr-ctx-note').className='ban ban-i';
-  document.getElementById('cr-ctx-note').style='';
+  const crNote=document.getElementById('cr-ctx-note');
+  crNote.className='ban ban-i';
+  crNote.removeAttribute('style');
   document.getElementById('cr-ctx-txt').innerHTML='Showing <b>All</b> sewa records — Beas and Major Centre combined.';
   document.getElementById('adv-panel').classList.remove('show');
 }
