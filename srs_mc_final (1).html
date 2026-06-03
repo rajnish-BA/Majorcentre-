@@ -1,0 +1,1090 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>SRS — Major Centre Prototype v3</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --brand:#8B0000;--brand-h:#A50000;--brand-light:#F0DDDD;
+  --sb-bg:#F8F8F8;--gray:#E8E8E8;--border:#e3e6f0;--border-l:#eee;
+  --txt:#333;--muted:#707070;--success:#2F5E00;--success-bg:#e6f0da;
+  --info-bg:#dce8f8;--info-txt:#1a5ea8;--warn-bg:#fdf3e0;--warn-txt:#7a5200;
+  --page:#f8f9fc;--card:#fff;--sh:0 1px 4px rgba(0,0,0,.1);--shmd:0 4px 18px rgba(0,0,0,.16);
+  --lean:#b8dff5;--lean-c:#0a5a8a;
+  --act1:#ffd580;--act1-c:#7a5200;
+  --act2:#ffb347;--act2-c:#7a3000;
+  --peak1:#f4a0a0;--peak1-c:#7a0000;
+  --peak2:#90d090;--peak2-c:#1a5000;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;font-family:'Roboto',sans-serif;font-size:13px;color:var(--txt);background:#b0b0c0;overflow:hidden;}
+.cvs{width:100vw;height:100vh;display:flex;align-items:center;justify-content:center;
+  background:radial-gradient(ellipse at 20% 50%,rgba(139,0,0,.09) 0%,transparent 60%),linear-gradient(135deg,#bdbdcb,#ababbc);
+  padding:20px;overflow:auto;}
+.clbl{position:fixed;top:10px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.65);color:#fff;font-size:11px;padding:5px 16px;border-radius:20px;letter-spacing:.5px;z-index:9999;pointer-events:none;white-space:nowrap;}
+.app{display:flex;width:1340px;height:820px;min-width:1340px;background:var(--page);border-radius:10px;overflow:hidden;box-shadow:0 24px 80px rgba(0,0,0,.35),0 0 0 1px rgba(0,0,0,.12);position:relative;}
+
+/* SIDEBAR */
+.sb{width:252px;min-width:252px;background:var(--sb-bg);border-right:1px solid #ddd;display:flex;flex-direction:column;overflow-y:auto;flex-shrink:0;scrollbar-width:thin;}
+.sb-brand{background:var(--gray);border-bottom:4px solid var(--brand);padding:14px 12px 12px;text-align:center;}
+.sb-logo{width:56px;height:56px;margin:0 auto 7px;display:block;}
+.sb-name{font-size:11.5px;font-weight:700;color:#000;text-transform:uppercase;letter-spacing:.6px;line-height:1.4;}
+.sb-per{font-size:11px;color:#555;margin-top:3px;text-transform:uppercase;}
+.sb-nav{flex:1;padding:6px 0 20px;}
+.nt{display:flex;align-items:center;gap:9px;padding:9px 14px;cursor:pointer;color:#444;font-size:14px;font-weight:500;user-select:none;transition:background .12s;}
+.nt:hover,.nt.open{background:var(--brand-light);}
+.nt.mc-red{color:var(--brand);}
+.ncaret{font-size:10px;color:#888;transition:transform .2s;}
+.nt.open .ncaret{transform:rotate(90deg);}
+.nc{display:none;background:#fff;border-bottom:1px solid #eee;}
+.nc.show{display:block;}
+.nch{display:block;padding:7px 14px 7px 46px;font-size:13px;color:#444;cursor:pointer;transition:background .1s;}
+.nch:hover{background:var(--gray);}
+.nch.active{color:var(--brand);font-weight:700;}
+.ns{display:flex;align-items:center;gap:9px;padding:10px 14px;cursor:pointer;color:#444;font-size:14px;font-weight:500;transition:background .12s;}
+.ns:hover,.ns.active{background:var(--brand-light);}
+
+/* MAIN */
+.main{flex:1;display:flex;flex-direction:column;min-width:0;background:var(--page);}
+.topbar{height:56px;background:#fff;border-bottom:1px solid var(--border);padding:0 20px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;box-shadow:0 1px 3px rgba(0,0,0,.05);}
+.tb-l h4{font-size:15px;font-weight:600;color:#333;}
+.tb-bc{font-size:11px;color:var(--muted);margin-top:2px;}
+.tb-bc b{color:var(--brand);}
+.tb-r{display:flex;align-items:center;gap:10px;}
+.zpill{background:#f5e0e0;border:1px solid #e8c0c0;border-radius:3px;padding:4px 10px;font-size:11px;color:var(--brand);font-weight:700;display:flex;align-items:center;gap:5px;}
+.zpill::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--brand);}
+.av{width:32px;height:32px;border-radius:50%;background:var(--brand);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;}
+.uw{display:flex;align-items:center;gap:7px;font-size:12px;color:#555;}
+
+/* CTX TABS */
+.ctx{background:#fff;border-bottom:2px solid var(--border);padding:0 20px;display:none;flex-shrink:0;overflow-x:auto;}
+.ctx.show{display:flex;}
+.ctab{padding:10px 17px;font-size:12px;color:#666;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;white-space:nowrap;font-weight:500;}
+.ctab:hover{color:var(--brand);}
+.ctab.on{color:var(--brand);border-bottom-color:var(--brand);font-weight:700;}
+
+/* PAGE CONTENT */
+.pc{flex:1;overflow-y:auto;padding:16px 20px;scrollbar-width:thin;scrollbar-color:#ddd transparent;}
+.screen{display:none;}
+.screen.active{display:block;}
+
+/* STATS */
+.srow{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px;}
+.sc{background:#fff;border:1px solid var(--border);border-radius:4px;padding:12px 14px;display:flex;align-items:center;gap:10px;box-shadow:var(--sh);}
+.si{width:36px;height:36px;border-radius:3px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.si-r{background:#f5e0e0;color:var(--brand);}
+.si-g{background:var(--success-bg);color:var(--success);}
+.si-b{background:var(--info-bg);color:var(--info-txt);}
+.si-o{background:var(--warn-bg);color:var(--warn-txt);}
+.sn{font-size:21px;font-weight:700;line-height:1;}
+.sl{font-size:10px;text-transform:uppercase;color:var(--muted);letter-spacing:.5px;margin-top:2px;}
+
+/* PAGE HEADER */
+.ph{display:flex;align-items:center;justify-content:space-between;margin-bottom:13px;padding-bottom:11px;border-bottom:1px solid var(--border);}
+.ph-t{font-size:15px;font-weight:600;display:flex;align-items:center;gap:8px;}
+.ph-r{display:flex;gap:7px;}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:5px;border:none;border-radius:3px;padding:7px 14px;font-size:13px;cursor:pointer;font-family:'Roboto',sans-serif;font-weight:500;}
+.btn-p{background:var(--brand);color:#fff;}
+.btn-p:hover{background:var(--brand-h);}
+.btn-s{background:#444;color:#fff;}
+.btn-g{background:var(--gray);color:#444;}
+.ba{background:none;border:1px solid #ccc;border-radius:2px;padding:3px 8px;font-size:11px;cursor:pointer;color:#444;}
+.ba:hover{border-color:var(--brand);color:var(--brand);}
+.ba.d:hover{border-color:#c00;color:#c00;}
+
+/* FILTER */
+.fb{display:flex;gap:7px;align-items:center;flex-wrap:wrap;margin-bottom:12px;}
+.inp{height:32px;border:1px solid #ccc;border-radius:4px;padding:0 9px;font-size:13px;color:#333;background:#fff;font-family:'Roboto',sans-serif;outline:none;}
+.inp:focus{border-color:var(--brand);}
+.sel{height:32px;border:1px solid #ccc;border-radius:4px;padding:0 8px;font-size:13px;color:#333;background:#fff;cursor:pointer;font-family:'Roboto',sans-serif;}
+.bs{height:32px;background:var(--brand);color:#fff;border:none;border-radius:3px;padding:0 14px;font-size:13px;cursor:pointer;}
+.br{height:32px;background:var(--gray);color:#444;border:none;border-radius:3px;padding:0 12px;font-size:13px;cursor:pointer;}
+
+/* FILTER CHIPS */
+.fchips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;align-items:center;}
+.fchip{display:inline-flex;align-items:center;gap:5px;background:#fff;border:1px solid #ccc;border-radius:14px;padding:3px 10px;font-size:11px;color:#444;}
+.fx{cursor:pointer;color:#888;font-size:12px;}
+.fx:hover{color:var(--brand);}
+
+/* TABLE */
+.tw{background:#fff;border:1px solid var(--border);border-radius:4px;overflow:hidden;box-shadow:var(--sh);}
+.t{width:100%;border-collapse:collapse;font-size:13px;}
+.t thead th{background:#f4f5f8;color:#333;font-weight:600;padding:9px 10px;border-bottom:2px solid #e2e2e2;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.4px;white-space:nowrap;}
+.t thead th.sub{background:#eef0f6;font-size:11px;font-weight:600;color:#555;text-align:center;}
+.t tbody td{padding:9px 10px;border-bottom:1px solid var(--border-l);color:#333;vertical-align:middle;}
+.t tbody tr:hover{background:#fafbfc;}
+.t tbody tr:last-child td{border-bottom:none;}
+.t td.tc{text-align:center;}
+.pill{display:inline-block;border-radius:5px;padding:3px 9px;font-size:11px;font-weight:600;white-space:nowrap;}
+.pa{background:var(--success-bg);color:var(--success);}
+.pi{background:#f5e0e0;color:var(--brand);}
+.pp{background:var(--warn-bg);color:var(--warn-txt);}
+.pb2{background:var(--info-bg);color:var(--info-txt);}
+.pmc{background:#ede8f8;color:#5a3ea8;}
+.tb-mc{display:inline-flex;align-items:center;border-radius:3px;padding:2px 7px;font-size:10px;font-weight:700;text-transform:uppercase;background:#ede8f8;color:#5a3ea8;}
+.tb-beas{display:inline-flex;align-items:center;border-radius:3px;padding:2px 7px;font-size:10px;font-weight:700;text-transform:uppercase;background:var(--info-bg);color:var(--info-txt);}
+.pagi{display:flex;align-items:center;justify-content:space-between;padding:9px 2px 2px;font-size:11px;color:var(--muted);}
+.pgb-wrap{display:flex;gap:3px;}
+.pgb{width:26px;height:26px;border:1px solid #ccc;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;cursor:pointer;color:#444;background:#fff;}
+.pgb.on{background:var(--brand);color:#fff;border-color:var(--brand);}
+
+/* BANNERS */
+.ban{border-radius:4px;padding:9px 13px;font-size:12px;margin-bottom:13px;display:flex;align-items:flex-start;gap:7px;line-height:1.6;}
+.ban-w{background:var(--warn-bg);border:1px solid #f5d47a;color:#5a3e00;}
+.ban-i{background:var(--info-bg);border:1px solid #9fbce8;color:#0a3a70;}
+.ban-s{background:var(--success-bg);border:1px solid #a8d08a;color:#1a4000;}
+
+/* FORMS */
+.fr{display:grid;gap:11px;margin-bottom:11px;}
+.fr2{grid-template-columns:1fr 1fr;}
+.fr3{grid-template-columns:1fr 1fr 1fr;}
+.fr1{grid-template-columns:1fr;}
+.fg{display:flex;flex-direction:column;gap:4px;}
+.fl{font-size:12px;color:#444;font-weight:500;}
+.req{color:var(--brand);}
+.fc{height:34px;border:1px solid #ccc;border-radius:4px;padding:0 9px;font-size:13px;color:#333;width:100%;background:#fff;font-family:'Roboto',sans-serif;outline:none;}
+.fc:focus{border-color:var(--brand);}
+textarea.fc{height:64px;padding:7px 9px;resize:none;}
+.ssep{font-size:10px;text-transform:uppercase;color:var(--brand);letter-spacing:.7px;font-weight:700;padding:8px 0 5px;border-bottom:1px solid var(--brand-light);margin-bottom:9px;}
+.togr{display:flex;align-items:center;gap:8px;margin-top:2px;}
+.tog{width:34px;height:18px;background:#ccc;border-radius:9px;position:relative;cursor:pointer;transition:background .17s;}
+.tog.on{background:var(--brand);}
+.tog::after{content:'';position:absolute;width:12px;height:12px;background:#fff;border-radius:50%;top:3px;left:3px;transition:left .17s;}
+.tog.on::after{left:19px;}
+
+/* DESTINATION TOGGLE */
+.dtog{display:flex;border:1px solid #ccc;border-radius:4px;overflow:hidden;width:fit-content;}
+.dto{padding:7px 18px;font-size:13px;font-weight:500;cursor:pointer;color:#555;background:#fff;border:none;font-family:'Roboto',sans-serif;transition:all .15s;}
+.dto:not(:first-child){border-left:1px solid #ccc;}
+.dto.on{background:var(--brand);color:#fff;}
+
+/* GROUPED DROPDOWN */
+.cswrap{position:relative;}
+.csbtn{height:32px;border:1px solid #ccc;border-radius:4px;padding:0 10px;font-size:13px;color:#333;background:#fff;cursor:pointer;text-align:left;width:240px;display:flex;align-items:center;justify-content:space-between;font-family:'Roboto',sans-serif;}
+.csdd{display:none;position:absolute;top:34px;left:0;width:290px;background:#fff;border:1px solid #ccc;border-radius:4px;box-shadow:0 4px 12px rgba(0,0,0,.15);z-index:500;max-height:320px;overflow-y:auto;}
+.csdd.open{display:block;}
+.cdsrch{padding:8px;border-bottom:1px solid #eee;}
+.cdsrch input{width:100%;height:28px;border:1px solid #ccc;border-radius:3px;padding:0 8px;font-size:12px;font-family:'Roboto',sans-serif;outline:none;}
+.cdgh{padding:5px 10px;font-size:10px;text-transform:uppercase;letter-spacing:.7px;color:#888;font-weight:700;background:#f8f8f8;border-bottom:1px solid #eee;}
+.cdgh:not(:first-child){border-top:1px solid #eee;}
+.cdop{padding:7px 14px;font-size:13px;color:#333;cursor:pointer;}
+.cdop:hover{background:var(--brand-light);color:var(--brand);}
+.cdop.mc{color:#5a3ea8;}
+.cdop.mc:hover{background:#ede8f8;}
+
+/* ═══ PERIOD MANAGER STYLES ═══ */
+.pm-wrap{display:flex;flex-direction:column;height:100%;}
+.mode-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px;}
+.mode-left{display:flex;align-items:center;gap:16px;}
+.mode-toggle{display:flex;border:2px solid var(--brand);border-radius:5px;overflow:hidden;}
+.mto{padding:8px 24px;font-size:13px;font-weight:600;cursor:pointer;color:var(--brand);background:#fff;border:none;font-family:'Roboto',sans-serif;transition:all .18s;display:flex;align-items:center;gap:7px;}
+.mto:not(:first-child){border-left:2px solid var(--brand);}
+.mto.on{background:var(--brand);color:#fff;}
+.mode-lbl{font-size:12px;color:#555;display:flex;align-items:center;gap:6px;}
+.ml-beas{color:var(--lean-c);background:var(--lean);padding:2px 10px;border-radius:3px;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.4px;}
+.ml-mc{color:#5a3ea8;background:#ede8f8;padding:2px 10px;border-radius:3px;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.4px;}
+.mode-right{display:flex;align-items:center;gap:8px;}
+.sw-btn{background:var(--brand);color:#fff;border:none;border-radius:3px;padding:7px 15px;font-size:13px;cursor:pointer;font-family:'Roboto',sans-serif;font-weight:500;}
+.sw-btn:hover{background:var(--brand-h);}
+.pnav{width:30px;height:30px;border:1px solid #ccc;border-radius:3px;background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;color:#444;}
+.pnav:hover{border-color:var(--brand);color:var(--brand);}
+.leg-row{display:flex;align-items:center;gap:18px;margin-bottom:16px;flex-wrap:wrap;}
+.leg-item{display:flex;align-items:center;gap:7px;font-size:12px;color:#333;}
+.leg-pill{height:26px;min-width:36px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;padding:0 8px;}
+.leg-lbl small{display:block;font-size:10px;color:#888;}
+.yr-row{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+.yr-num{font-size:26px;font-weight:700;color:#333;line-height:1;}
+.pt-bar{background:#fff;border:1px solid var(--border);border-radius:4px;padding:9px 14px;margin-bottom:14px;display:flex;align-items:center;gap:7px;flex-wrap:wrap;box-shadow:var(--sh);}
+.pt-lbl{font-size:11px;font-weight:700;text-transform:uppercase;color:#555;letter-spacing:.4px;margin-right:4px;white-space:nowrap;}
+.ptb{height:26px;border-radius:3px;border:2px solid transparent;padding:0 11px;font-size:11px;font-weight:600;cursor:pointer;font-family:'Roboto',sans-serif;transition:all .15s;}
+.ptb.on{border-color:#333!important;box-shadow:0 0 0 1px #333;}
+.ptb-clr{background:#eee;color:#555;border:2px solid #ccc!important;}
+.pt-hint{font-size:11px;color:#888;margin-left:auto;}
+.cal-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+.cal-month{background:#fff;border:1px solid var(--border);border-radius:4px;overflow:hidden;box-shadow:var(--sh);}
+.cmhdr{background:var(--brand);color:#fff;text-align:center;padding:8px;font-size:13px;font-weight:600;}
+.cdhdr{display:grid;grid-template-columns:repeat(7,1fr);}
+.cdhdr span{text-align:center;padding:5px 2px;font-size:11px;font-weight:600;color:#555;background:#f8f8f8;border-bottom:1px solid #eee;}
+.cdays{display:grid;grid-template-columns:repeat(7,1fr);}
+.cd{text-align:center;padding:6px 2px;font-size:12px;cursor:pointer;line-height:1.2;user-select:none;}
+.cd:hover:not(.empty):not(.past){opacity:.72;outline:2px solid #555;outline-offset:-2px;}
+.cd.empty{cursor:default;}
+.cd.past{color:#ccc;cursor:not-allowed;}
+.cd.today{font-weight:700;outline:2px solid var(--brand);outline-offset:-2px;}
+.pm-save-bar{background:#fff;border-top:1px solid var(--border);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+.pm-save-info{font-size:12px;color:#555;}
+.pm-save-info b{color:var(--brand);}
+.pm-btns{display:flex;gap:8px;}
+.btn-save{height:32px;background:var(--brand);color:#fff;border:none;border-radius:3px;padding:0 18px;font-size:13px;cursor:pointer;font-family:'Roboto',sans-serif;font-weight:600;}
+.btn-save:hover{background:var(--brand-h);}
+.btn-rst{height:32px;background:var(--gray);color:#444;border:none;border-radius:3px;padding:0 14px;font-size:13px;cursor:pointer;font-family:'Roboto',sans-serif;}
+
+/* MODALS */
+.mbg{display:none;position:absolute;inset:0;background:rgba(0,0,0,.55);z-index:9000;align-items:flex-start;justify-content:center;padding:30px 16px;overflow-y:auto;}
+.mbg.show{display:flex;}
+.mbox{background:#fff;border-radius:5px;width:680px;max-width:100%;box-shadow:var(--shmd);animation:mi .17s ease;margin:auto;}
+.mbox.lg{width:820px;}
+.mbox.sm{width:480px;}
+@keyframes mi{from{opacity:0;transform:translateY(-8px);}to{opacity:1;transform:translateY(0);}}
+.mhdr{display:flex;align-items:center;justify-content:space-between;padding:15px 20px 12px;}
+.mhdr h5{font-size:14px;text-transform:uppercase;font-weight:700;color:#000;letter-spacing:.4px;}
+.mcls{background:none;border:none;cursor:pointer;padding:2px;line-height:1;font-size:20px;color:#555;}
+.mbdy{padding:4px 20px 16px;}
+.mftr{background:#f7f8fc;padding:12px 20px;display:flex;gap:8px;border-top:1px solid var(--border);border-radius:0 0 5px 5px;}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#2F5E00;color:#fff;padding:9px 20px;border-radius:4px;font-size:13px;font-weight:500;z-index:99999;display:none;box-shadow:0 4px 12px rgba(0,0,0,.25);}
+.toast.show{display:block;animation:fio 2.4s ease forwards;}
+@keyframes fio{0%{opacity:0;transform:translateX(-50%) translateY(8px);}15%{opacity:1;transform:translateX(-50%) translateY(0);}75%{opacity:1;}100%{opacity:0;}}
+
+/* TOOLTIP */
+.tip{background:#333;color:#fff;font-size:11px;padding:5px 10px;border-radius:3px;position:fixed;z-index:9999;pointer-events:none;display:none;white-space:nowrap;}
+
+/* RULEBOX */
+.rulebox{background:#fff;border:1px solid var(--border);border-left:4px solid var(--brand);border-radius:4px;padding:12px 15px;margin-top:14px;font-size:12px;color:#444;line-height:1.7;}
+.rulebox h6{font-size:10px;text-transform:uppercase;color:var(--brand);font-weight:700;margin-bottom:5px;letter-spacing:.5px;}
+
+
+/* ROLE SWITCHER */
+.rsw{position:fixed;bottom:14px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.72);backdrop-filter:blur(8px);border-radius:30px;padding:7px 14px;display:flex;gap:7px;z-index:99999;align-items:center;}
+.rsw span{font-size:11px;color:rgba(255,255,255,.55);margin-right:3px;}
+.rsb{padding:5px 13px;border-radius:20px;font-size:11px;font-weight:600;cursor:pointer;border:1px solid rgba(255,255,255,.22);color:rgba(255,255,255,.7);background:rgba(255,255,255,.1);transition:all .15s;font-family:'Roboto',sans-serif;}
+.rsb:hover{background:rgba(255,255,255,.2);}
+.rsb.on{background:var(--brand);color:#fff;border-color:var(--brand);}
+
+::-webkit-scrollbar{width:5px;height:5px;}
+::-webkit-scrollbar-thumb{background:#ccc;border-radius:3px;}
+
+/* CONSOLIDATED REPORT */
+.adv-btn{height:32px;background:#fff;border:1px solid #ccc;border-radius:3px;padding:0 13px;font-size:12px;cursor:pointer;display:flex;align-items:center;gap:5px;color:#444;font-family:'Roboto',sans-serif;}
+.adv-dot{width:8px;height:8px;border-radius:50%;background:#2ecc71;display:inline-block;}
+.clear-btn{background:none;border:none;font-size:12px;color:var(--brand);cursor:pointer;font-weight:600;font-family:'Roboto',sans-serif;}
+.adv-panel{background:#fff;border:1px solid #ccc;border-radius:4px;padding:16px 20px;margin-bottom:14px;box-shadow:var(--sh);position:relative;display:none;}
+.adv-panel.show{display:block;}
+.t thead tr.hdr1 th{background:var(--brand);color:#fff;padding:9px 10px;text-align:left;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.4px;white-space:nowrap;}
+.t thead tr.hdr1 th.tc{text-align:center;}
+.t thead tr.hdr2 th{background:#f4f5f8;color:#444;padding:7px 10px;font-size:11px;font-weight:600;text-align:center;border-bottom:2px solid #e2e2e2;white-space:nowrap;}
+.t thead tr.hdr2 th.left{text-align:left;}
+.t tbody td.num{text-align:right;}
+.t tfoot td{background:#f4f5f8;padding:8px 10px;font-size:12px;font-weight:700;color:#333;text-align:right;}
+.t tfoot td.left{text-align:left;}
+.mc-bdg{display:inline-flex;border-radius:3px;padding:2px 7px;font-size:10px;font-weight:700;text-transform:uppercase;background:#ede8f8;color:#5a3ea8;}
+.beas-bdg{display:inline-flex;border-radius:3px;padding:2px 7px;font-size:10px;font-weight:700;text-transform:uppercase;background:var(--info-bg);color:var(--info-txt);}
+
+</style>
+</head>
+<body>
+<div class="clbl">SRS — Major Centre Prototype v3 &nbsp;·&nbsp; All Screens Integrated &nbsp;·&nbsp; Zonal Admin</div>
+<div class="tip" id="tip"></div>
+<div class="toast" id="toast"></div>
+
+<div class="cvs"><div class="app" id="app">
+
+<!-- ════ SIDEBAR ════ -->
+<div class="sb">
+  <div class="sb-brand">
+    <svg class="sb-logo" viewBox="0 0 64 64"><rect width="64" height="64" rx="4" fill="#8B0000"/><rect x="5" y="5" width="54" height="54" rx="2" fill="none" stroke="#fff" stroke-width="2.5"/><text x="32" y="26" text-anchor="middle" font-size="15" font-weight="800" fill="#fff" font-family="Roboto,sans-serif">RS</text><text x="32" y="46" text-anchor="middle" font-size="15" font-weight="800" fill="#fff" font-family="Roboto,sans-serif">SB</text></svg>
+    <div class="sb-name">Sewa Reporting System</div>
+    <div class="sb-per">Period: Lean</div>
+  </div>
+  <div class="sb-nav">
+    <div class="ns" id="ns-dash" onclick="go('dashboard')">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="#444"><rect x="2" y="2" width="9" height="9" rx="1.5"/><rect x="13" y="2" width="9" height="9" rx="1.5"/><rect x="2" y="13" width="9" height="9" rx="1.5"/><rect x="13" y="13" width="9" height="9" rx="1.5"/></svg>
+      <span>Dashboard</span>
+    </div>
+    <!-- BEAS MASTER -->
+    <div class="nt" id="nt-beas" onclick="acc('beas')">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#444" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+      <span style="flex:1;">Beas Master</span><span class="ncaret">&#9654;</span>
+    </div>
+    <div class="nc" id="nc-beas">
+      <div class="nch" id="nc-areas" onclick="go('areas')">Areas</div>
+      <div class="nch" id="nc-centres" onclick="go('centres')">Centres</div>
+      <div class="nch" id="nc-beas-dept" onclick="go('beas-dept')">Beas Departments</div>
+      <div class="nch" id="nc-beas-sewa" onclick="go('beas-sewa')">Sewa Names</div>
+      <div class="nch" id="nc-period" onclick="go('period')">Periods</div>
+    </div>
+    <!-- MC MASTER -->
+    <div class="nt mc-red open" id="nt-mc" onclick="acc('mc')">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8B0000" stroke-width="2"><path d="M3 21h18M6 21V7l6-4 6 4v14M9 21V12h6v9"/></svg>
+      <span style="flex:1;font-weight:700;">Major Centre Master</span><span class="ncaret">&#9654;</span>
+    </div>
+    <div class="nc show" id="nc-mc">
+      <div class="nch active" id="nc-mc-list" onclick="go('mc-list')">Major Centres</div>
+      <div class="nch" id="nc-mc-dept" onclick="go('mc-dept')">MC Departments</div>
+      <div class="nch" id="nc-mc-sewa" onclick="go('mc-sewa')">MC Sewa Names</div>
+    </div>
+    <!-- SEWA MANAGEMENT -->
+    <div class="nt" id="nt-sewamgmt" onclick="acc('sewamgmt')">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#444" stroke-width="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/></svg>
+      <span style="flex:1;">Sewa Management</span><span class="ncaret">&#9654;</span>
+    </div>
+    <div class="nc" id="nc-sewamgmt">
+      <div class="nch" id="nc-sewa-req" onclick="go('sewa-req')">Sewa Requirements</div>
+      <div class="nch" id="nc-create-sewa" onclick="go('create-sewa')">Create Sewa</div>
+      <div class="nch" id="nc-sewa-list" onclick="go('sewa-list')">Sewa List</div>
+    </div>
+    <!-- USER MANAGEMENT -->
+    <div class="nt" id="nt-users" onclick="acc('users')">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#444" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+      <span style="flex:1;">User Management</span><span class="ncaret">&#9654;</span>
+    </div>
+    <div class="nc" id="nc-users">
+      <div class="nch" id="nc-user-list" onclick="go('user-list')">All Users</div>
+      <div class="nch" id="nc-mc-users" onclick="go('mc-users')">MC Users</div>
+      <div class="nch" id="nc-mc-role" onclick="go('mc-role')">MC Role &amp; Permissions</div>
+    </div>
+    <!-- REPORTS -->
+    <div class="nt" id="nt-rep" onclick="acc('rep')">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#444" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      <span style="flex:1;">Reports</span><span class="ncaret">&#9654;</span>
+    </div>
+    <div class="nc" id="nc-rep">
+      <div class="nch" id="nc-cons-report" onclick="go('cons-report')">Department Wise Report</div>
+      <div class="nch">Sewaname Wise Report</div>
+      <div class="nch">Area Wise Report</div>
+      <div class="nch">MC Zone Reports</div>
+    </div>
+  </div>
+</div>
+
+<!-- ════ MAIN ════ -->
+<div class="main">
+  <div class="topbar">
+    <div class="tb-l"><h4 id="pgt">Major Centre List</h4><div class="tb-bc" id="pgbc">Masters &rsaquo; <b>Major Centre Master</b> &rsaquo; Major Centres</div></div>
+    <div class="tb-r"><div class="zpill" id="zpill">Zone III &mdash; Zonal Admin</div><div class="uw"><div class="av" id="av">ZA</div><span id="un">Zonal Admin</span></div></div>
+  </div>
+
+  <!-- CTX TABS (MC screens) -->
+  <div class="ctx" id="ctx">
+    <div class="ctab on" id="ct-mc-list" onclick="go('mc-list')">Major Centres</div>
+    <div class="ctab" id="ct-mc-dept" onclick="go('mc-dept')">MC Departments</div>
+    <div class="ctab" id="ct-mc-sewa" onclick="go('mc-sewa')">MC Sewa Names</div>
+  </div>
+
+  <!-- ════ PAGE CONTENT ════ -->
+  <div class="pc" id="pc">
+
+    <!-- DASHBOARD -->
+    <div class="screen" id="sc-dashboard">
+      <div class="ban ban-i">Welcome, <b>Zonal Admin — Zone III</b>. You manage both Beas Master and Major Centre Master. Use the sidebar to navigate all screens.</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:14px;">
+        <div style="background:#fff;border:1px solid var(--border);border-radius:4px;padding:16px;">
+          <div style="font-size:11px;text-transform:uppercase;color:var(--brand);font-weight:700;margin-bottom:10px;padding-bottom:7px;border-bottom:1px solid #f0dddd;">Zone III — Major Centres</div>
+          <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #f5f5f5;font-size:12px;"><span>Total MCs</span><b>11</b></div>
+          <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #f5f5f5;font-size:12px;"><span>Active</span><b style="color:var(--success)">9</b></div>
+          <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #f5f5f5;font-size:12px;"><span>MC Users</span><b>8</b></div>
+          <div style="display:flex;justify-content:space-between;padding:5px 0;font-size:12px;"><span>MC Depts</span><b>24</b></div>
+        </div>
+        <div style="background:#fff;border:1px solid var(--border);border-radius:4px;padding:16px;">
+          <div style="font-size:11px;text-transform:uppercase;color:var(--brand);font-weight:700;margin-bottom:10px;padding-bottom:7px;border-bottom:1px solid #f0dddd;">Sewa Requirements</div>
+          <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #f5f5f5;font-size:12px;"><span>Beas Requirements</span><b>24</b></div>
+          <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #f5f5f5;font-size:12px;"><span>MC Requirements</span><b style="color:#5a3ea8">7</b></div>
+          <div style="display:flex;justify-content:space-between;padding:5px 0;font-size:12px;"><span>Total Sewadars (Beas)</span><b>3,450</b></div>
+        </div>
+        <div style="background:#fff;border:1px solid var(--border);border-radius:4px;padding:16px;">
+          <div style="font-size:11px;text-transform:uppercase;color:var(--brand);font-weight:700;margin-bottom:10px;padding-bottom:7px;border-bottom:1px solid #f0dddd;">Current Periods</div>
+          <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #f5f5f5;font-size:12px;"><span>Beas Period</span><b>LEAN 2026</b></div>
+          <div style="display:flex;justify-content:space-between;padding:5px 0;font-size:12px;"><span>MC Period</span><b>MC LEAN 2026</b></div>
+        </div>
+      </div>
+      <div class="rulebox"><h6>&#128274; Visibility Rule</h6>Major Centre Master data is <b>visible only to Zonal Admin, Zonal Coordinator, and Local Zonal Users</b>. Area, State, and Centre users cannot see MC data.</div>
+    </div>
+
+    <!-- MC LIST -->
+    <div class="screen active" id="sc-mc-list">
+      <div class="srow">
+        <div class="sc"><div class="si si-r"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M6 21V7l6-4 6 4v14M9 21V12h6v9"/></svg></div><div><div class="sn">11</div><div class="sl">Total MCs</div></div></div>
+        <div class="sc"><div class="si si-g"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg></div><div><div class="sn">9</div><div class="sl">Active</div></div></div>
+        <div class="sc"><div class="si si-b"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div><div><div class="sn">8</div><div class="sl">MC Users</div></div></div>
+        <div class="sc"><div class="si si-o"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></div><div><div class="sn">24</div><div class="sl">MC Depts</div></div></div>
+      </div>
+      <div class="ph"><div class="ph-t">Major Centre List</div><div class="ph-r"><button class="btn btn-s">&#8595; Export</button><button class="btn btn-p" onclick="openM('m-add-mc')">+ Add Major Centre</button></div></div>
+      <div class="fb"><input class="inp" style="width:180px" placeholder="Search name / code..."><select class="sel"><option>Zone III</option></select><select class="sel"><option>All States</option><option>Punjab</option><option>Gujarat</option><option>Bihar</option><option>Nepal</option><option>UK</option><option>USA</option></select><select class="sel"><option>All Status</option><option>Active</option><option>Inactive</option></select><button class="bs">Search</button><button class="br">Reset</button></div>
+      <div class="tw"><table class="t"><thead><tr><th>#</th><th>MC Code</th><th>Major Centre Name</th><th>Zone</th><th>State/Country</th><th>File No.</th><th>Link Centres</th><th>Depts</th><th>Status</th><th>Actions</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>MC-001</td><td><b>Adipur MC</b></td><td>Zone III</td><td>Gujarat</td><td>AD/2022/001</td><td><span class="pill pb2">2</span></td><td><span class="pill pa">3</span></td><td><span class="pill pa">Active</span></td><td><button class="ba">Edit</button><button class="ba">View</button><button class="ba d">Del</button></td></tr>
+        <tr><td>2</td><td>MC-002</td><td><b>Bhati MC</b></td><td>Zone III</td><td>Punjab</td><td>BH/2023/002</td><td><span class="pill pb2">1</span></td><td><span class="pill pa">4</span></td><td><span class="pill pa">Active</span></td><td><button class="ba">Edit</button><button class="ba">View</button><button class="ba d">Del</button></td></tr>
+        <tr><td>3</td><td>MC-003</td><td><b>Dera Ghazi Khan MC</b></td><td>Zone III</td><td>Punjab (PK)</td><td>DG/2023/003</td><td><span class="pill pb2">1</span></td><td><span class="pill pp">2</span></td><td><span class="pill pa">Active</span></td><td><button class="ba">Edit</button><button class="ba">View</button><button class="ba d">Del</button></td></tr>
+        <tr><td>4</td><td>MC-004</td><td><b>Haynes Park MC</b></td><td>Zone III</td><td>UK</td><td>HP/2023/004</td><td><span class="pill pb2">3</span></td><td><span class="pill pa">5</span></td><td><span class="pill pa">Active</span></td><td><button class="ba" onclick="openM('m-edit-mc')">Edit</button><button class="ba" onclick="openM('m-view-mc')">View</button><button class="ba d" onclick="openM('m-del')">Del</button></td></tr>
+        <tr><td>5</td><td>MC-005</td><td><b>Kathmandu MC</b></td><td>Zone III</td><td>Nepal</td><td>KT/2024/005</td><td><span class="pill pb2">2</span></td><td><span class="pill pa">4</span></td><td><span class="pill pa">Active</span></td><td><button class="ba">Edit</button><button class="ba">View</button><button class="ba d">Del</button></td></tr>
+        <tr><td>6</td><td>MC-006</td><td><b>Nabha MC</b></td><td>Zone III</td><td>Punjab</td><td>NB/2022/006</td><td><span class="pill pb2">4</span></td><td><span class="pill pa">5</span></td><td><span class="pill pa">Active</span></td><td><button class="ba">Edit</button><button class="ba">View</button><button class="ba d">Del</button></td></tr>
+        <tr><td>7</td><td>MC-007</td><td><b>Paror MC</b></td><td>Zone III</td><td>Bihar</td><td>PR/2024/007</td><td><span class="pill pb2">1</span></td><td><span class="pill pp">2</span></td><td><span class="pill pa">Active</span></td><td><button class="ba">Edit</button><button class="ba">View</button><button class="ba d">Del</button></td></tr>
+        <tr><td>8</td><td>MC-008</td><td><b>Peach Tree MC</b></td><td>Zone III</td><td>USA</td><td>PT/2023/008</td><td><span class="pill pb2">2</span></td><td><span class="pill pa">3</span></td><td><span class="pill pa">Active</span></td><td><button class="ba">Edit</button><button class="ba">View</button><button class="ba d">Del</button></td></tr>
+        <tr><td>9</td><td>MC-009</td><td><b>Rudrapur MC</b></td><td>Zone III</td><td>Uttarakhand</td><td>RD/2024/009</td><td><span class="pill pb2">1</span></td><td><span class="pill pp">2</span></td><td><span class="pill pa">Active</span></td><td><button class="ba">Edit</button><button class="ba">View</button><button class="ba d">Del</button></td></tr>
+        <tr><td>10</td><td>MC-010</td><td><b>Sherghati MC</b></td><td>Zone III</td><td>Bihar</td><td>SG/2024/010</td><td><span class="pill pb2">1</span></td><td><span class="pill pp">1</span></td><td><span class="pill pa">Active</span></td><td><button class="ba">Edit</button><button class="ba">View</button><button class="ba d">Del</button></td></tr>
+        <tr><td>11</td><td>MC-011</td><td><b>Sikanderpur MC</b></td><td>Zone III</td><td>Punjab</td><td>SK/2024/011</td><td><span class="pill pi">0</span></td><td><span class="pill pi">0</span></td><td><span class="pill pi">Inactive</span></td><td><button class="ba">Edit</button><button class="ba">View</button><button class="ba d">Del</button></td></tr>
+      </tbody></table></div>
+      <div class="pagi"><span>Showing all 11 records</span><div class="pgb-wrap"><div class="pgb">&#8249;</div><div class="pgb on">1</div><div class="pgb">&#8250;</div></div></div>
+    </div>
+
+    <!-- MC DEPT -->
+    <div class="screen" id="sc-mc-dept">
+      <div class="ban ban-w">MC Departments are <b>exclusive to Major Centres</b> — separate from Beas Departments.</div>
+      <div class="ph"><div class="ph-t">MC Department List</div><button class="btn btn-p" onclick="openM('m-add-dept')">+ Add MC Department</button></div>
+      <div class="fb"><input class="inp" style="width:180px" placeholder="Search..."><select class="sel"><option>All MCs</option><option>Kathmandu MC</option><option>Nabha MC</option></select><select class="sel"><option>All Status</option><option>Active</option></select><button class="bs">Search</button></div>
+      <div class="tw"><table class="t"><thead><tr><th>#</th><th>Code</th><th>MC Department Name</th><th>Applicable MCs</th><th>Sewa Names</th><th>Status</th><th>Actions</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>MCD-01</td><td>Langar Seva</td><td><span class="pill pb2">All MCs</span></td><td><span class="pill pa">6</span></td><td><span class="pill pa">Active</span></td><td><button class="ba">Edit</button><button class="ba">Sewa Names</button></td></tr>
+        <tr><td>2</td><td>MCD-02</td><td>Satsang Management</td><td><span class="pill pb2">All MCs</span></td><td><span class="pill pa">4</span></td><td><span class="pill pa">Active</span></td><td><button class="ba">Edit</button><button class="ba">Sewa Names</button></td></tr>
+        <tr><td>3</td><td>MCD-03</td><td>Maintenance &amp; Infra</td><td><span class="pill pb2">All MCs</span></td><td><span class="pill pp">2</span></td><td><span class="pill pa">Active</span></td><td><button class="ba">Edit</button><button class="ba">Sewa Names</button></td></tr>
+        <tr><td>4</td><td>MCD-04</td><td>Medical Sewa</td><td><span class="pill pp">Selected</span></td><td><span class="pill pa">5</span></td><td><span class="pill pa">Active</span></td><td><button class="ba">Edit</button><button class="ba">Sewa Names</button></td></tr>
+        <tr><td>5</td><td>MCD-05</td><td>Guest House Mgmt</td><td><span class="pill pp">Selected</span></td><td><span class="pill pi">0</span></td><td><span class="pill pi">Inactive</span></td><td><button class="ba">Edit</button><button class="ba">Sewa Names</button></td></tr>
+      </tbody></table></div>
+    </div>
+
+    <!-- MC SEWA NAMES -->
+    <div class="screen" id="sc-mc-sewa">
+      <div class="ban ban-w">Sewa Names here are linked to <b>MC Departments only</b>.</div>
+      <div class="ph"><div class="ph-t">MC Sewa Names</div><button class="btn btn-p" onclick="openM('m-add-sewa')">+ Add Sewa Name</button></div>
+      <div class="fb"><input class="inp" style="width:180px" placeholder="Search..."><select class="sel"><option>All MC Depts</option><option>Langar Seva</option><option>Satsang Management</option></select><button class="bs">Search</button></div>
+      <div class="tw"><table class="t"><thead><tr><th>#</th><th>Sewa Name</th><th>MC Department</th><th>Type</th><th>Status</th><th>Actions</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>Roti Making</td><td>Langar Seva</td><td>Physical</td><td><span class="pill pa">Active</span></td><td><button class="ba">Edit</button><button class="ba d">Del</button></td></tr>
+        <tr><td>2</td><td>Dish Washing</td><td>Langar Seva</td><td>Physical</td><td><span class="pill pa">Active</span></td><td><button class="ba">Edit</button><button class="ba d">Del</button></td></tr>
+        <tr><td>3</td><td>Sound System</td><td>Satsang Management</td><td>Technical</td><td><span class="pill pa">Active</span></td><td><button class="ba">Edit</button><button class="ba d">Del</button></td></tr>
+        <tr><td>4</td><td>First Aid</td><td>Medical Sewa</td><td>Medical</td><td><span class="pill pa">Active</span></td><td><button class="ba">Edit</button><button class="ba d">Del</button></td></tr>
+      </tbody></table></div>
+    </div>
+
+    <!-- ★ PERIOD MANAGER (Beas + MC integrated) -->
+    <div class="screen" id="sc-period">
+      <div class="mode-bar">
+        <div class="mode-left">
+          <div class="mode-toggle">
+            <button class="mto on" id="mto-beas" onclick="pmSetMode('beas')">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+              Beas
+            </button>
+            <button class="mto" id="mto-mc" onclick="pmSetMode('mc')">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 21h18M6 21V7l6-4 6 4v14M9 21V12h6v9"/></svg>
+              Major Centre
+            </button>
+          </div>
+          <div class="mode-lbl">Setting periods for:&nbsp;<span id="pm-badge" class="ml-beas">BEAS</span></div>
+        </div>
+        <div class="mode-right">
+          <button class="sw-btn" onclick="pmCurYear()">Switch To Current Year</button>
+          <button class="pnav" onclick="pmChgYr(-1)">&#8249;</button>
+          <button class="pnav" onclick="pmChgYr(1)">&#8250;</button>
+        </div>
+      </div>
+      <div class="leg-row" id="pm-legend"></div>
+      <div class="yr-row"><div class="yr-num" id="pm-yr">2026</div></div>
+      <div class="pt-bar">
+        <span class="pt-lbl">Select period type, then click dates:</span>
+        <div id="pm-pt-btns" style="display:flex;gap:6px;flex-wrap:wrap;"></div>
+        <button class="ptb ptb-clr" onclick="pmClearType()">&#10005; Clear</button>
+        <span class="pt-hint" id="pm-hint">No type selected — click a period type first</span>
+      </div>
+      <div class="cal-grid" id="pm-cal"></div>
+      <div class="pm-save-bar">
+        <div class="pm-save-info"><span id="pm-save-txt">Setting: <b>BEAS</b> &nbsp;·&nbsp; Year: <b>2026</b> &nbsp;·&nbsp; Click dates to assign period types</span></div>
+        <div class="pm-btns">
+          <button class="btn-rst" onclick="pmReset()">Reset Calendar</button>
+          <button class="btn-save" onclick="pmSave()">Save Period Settings</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- SEWA REQUIREMENT MANAGER -->
+    <div class="screen" id="sc-sewa-req">
+      <div class="ph"><div class="ph-t">Sewa Requirement Manager</div><div class="ph-r"><button class="btn btn-s">Export &#9660;</button><button class="btn btn-p" onclick="openM('m-add-req')">+ Add Sewa Requirement</button></div></div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap;">
+        <button style="height:30px;background:#fff;border:1px solid #ccc;border-radius:3px;padding:0 12px;font-size:12px;cursor:pointer;">&#9660; Advance Search</button>
+        <button style="background:none;border:none;font-size:11px;color:var(--brand);cursor:pointer;font-weight:600;">Clear All</button>
+        <div class="fchips" style="margin-bottom:0;">
+          <div class="fchip">Year : 2026 <span class="fx">&#215;</span></div>
+          <div class="fchip">Period : LEAN <span class="fx">&#215;</span></div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
+        <div style="font-size:12px;font-weight:600;color:#444;">View:</div>
+        <div class="dtog">
+          <button class="dto on" id="rfilt-all" onclick="filterReq('all')">All</button>
+          <button class="dto" id="rfilt-beas" onclick="filterReq('beas')">&#8594; Beas</button>
+          <button class="dto" id="rfilt-mc" onclick="filterReq('mc')">&#8594; Major Centre</button>
+        </div>
+      </div>
+      <div class="tw"><table class="t"><thead><tr><th rowspan="2">#</th><th rowspan="2">Area / Major Centre</th><th rowspan="2">Destination</th><th rowspan="2">From Date</th><th rowspan="2">To Date</th><th colspan="3" class="sub">Sewa Names</th><th rowspan="2">Action</th></tr><tr><th class="sub">Langar Sewa</th><th class="sub">Satsang Sewa</th><th class="sub">Medical Sewa</th></tr></thead>
+      <tbody id="req-tbody">
+        <tr data-dest="beas"><td>1</td><td><b>Ludhiana</b><br><small style="color:#888;">Area</small></td><td><span class="tb-beas">Beas</span></td><td>01 Jan 2026</td><td>31 Mar 2026</td><td class="tc">500</td><td class="tc">200</td><td class="tc">80</td><td><button class="ba">Edit</button></td></tr>
+        <tr data-dest="mc"><td>2</td><td><b>Kathmandu MC</b><br><small style="color:#5a3ea8;">Major Centre</small></td><td><span class="tb-mc">MC</span></td><td>01 Jan 2026</td><td>31 Mar 2026</td><td class="tc">150</td><td class="tc">60</td><td class="tc">20</td><td><button class="ba">Edit</button></td></tr>
+        <tr data-dest="beas"><td>3</td><td><b>Ahmedabad</b><br><small style="color:#888;">Area</small></td><td><span class="tb-beas">Beas</span></td><td>01 Jan 2026</td><td>31 Mar 2026</td><td class="tc">300</td><td class="tc">120</td><td class="tc">50</td><td><button class="ba">Edit</button></td></tr>
+        <tr data-dest="mc"><td>4</td><td><b>Nabha MC</b><br><small style="color:#5a3ea8;">Major Centre</small></td><td><span class="tb-mc">MC</span></td><td>15 Jan 2026</td><td>31 Mar 2026</td><td class="tc">200</td><td class="tc">80</td><td class="tc">30</td><td><button class="ba">Edit</button></td></tr>
+        <tr data-dest="beas"><td>5</td><td><b>Jalandhar</b><br><small style="color:#888;">Area</small></td><td><span class="tb-beas">Beas</span></td><td>01 Jan 2026</td><td>31 Mar 2026</td><td class="tc">400</td><td class="tc">160</td><td class="tc">60</td><td><button class="ba">Edit</button></td></tr>
+        <tr data-dest="mc"><td>6</td><td><b>Bhati MC</b><br><small style="color:#5a3ea8;">Major Centre</small></td><td><span class="tb-mc">MC</span></td><td>01 Feb 2026</td><td>31 Mar 2026</td><td class="tc">100</td><td class="tc">40</td><td class="tc">—</td><td><button class="ba">Edit</button></td></tr>
+        <tr data-dest="mc"><td>7</td><td><b>Rudrapur MC</b><br><small style="color:#5a3ea8;">Major Centre</small></td><td><span class="tb-mc">MC</span></td><td>01 Mar 2026</td><td>31 Mar 2026</td><td class="tc">80</td><td class="tc">30</td><td class="tc">—</td><td><button class="ba">Edit</button></td></tr>
+      </tbody></table></div>
+      <div class="pagi"><span>Showing all 7 records</span><div class="pgb-wrap"><div class="pgb">&#8249;</div><div class="pgb on">1</div><div class="pgb">&#8250;</div></div></div>
+    </div>
+
+    <!-- CREATE SEWA -->
+    <div class="screen" id="sc-create-sewa">
+      <div class="ph"><div class="ph-t">Create Sewa</div></div>
+      <div style="max-width:640px;">
+        <div class="ssep">Step 1 — Sewa Destination</div>
+        <div style="font-size:12px;font-weight:600;color:#444;margin-bottom:7px;">Where is this Sewa being performed? <span class="req">*</span></div>
+        <div class="dtog" style="margin-bottom:16px;">
+          <button class="dto on" id="sd-beas" onclick="sewaDest('beas')">&#8594; Beas</button>
+          <button class="dto" id="sd-mc" onclick="sewaDest('mc')">&#8594; Major Centre</button>
+        </div>
+        <div id="sd-beas-f">
+          <div class="ssep">Step 2 — Beas Sewa Details</div>
+          <div class="fr fr2"><div class="fg"><label class="fl">Department <span class="req">*</span></label><select class="fc"><option>— Select Dept —</option><option>Langar</option><option>Security</option><option>Medical</option></select></div><div class="fg"><label class="fl">Sewa Name <span class="req">*</span></label><select class="fc"><option>— Select Sewa Name —</option></select></div></div>
+        </div>
+        <div id="sd-mc-f" style="display:none;">
+          <div class="ban ban-i" style="font-size:11px;margin-bottom:10px;">Destination is <b>Major Centre</b>. Select MC, then MC Department and Sewa Name.</div>
+          <div class="ssep">Step 2 — MC Sewa Details</div>
+          <div class="fr fr2"><div class="fg"><label class="fl">Major Centre <span class="req">*</span></label><select class="fc"><option>— Select MC —</option><option>Adipur MC</option><option>Bhati MC</option><option>Dera Ghazi Khan MC</option><option>Haynes Park MC</option><option>Kathmandu MC</option><option>Nabha MC</option><option>Paror MC</option><option>Peach Tree MC</option><option>Rudrapur MC</option><option>Sherghati MC</option><option>Sikanderpur MC</option></select></div><div class="fg"><label class="fl">MC Department <span class="req">*</span></label><select class="fc"><option>— Select MC Dept —</option><option>Langar Seva</option><option>Satsang Management</option><option>Medical Sewa</option></select></div></div>
+          <div class="fr fr2"><div class="fg"><label class="fl">Sewa Name <span class="req">*</span></label><select class="fc"><option>— Select Sewa Name —</option></select></div><div class="fg"><label class="fl">Sewa Type</label><select class="fc"><option>Physical</option><option>Technical</option><option>Administrative</option></select></div></div>
+        </div>
+        <div class="ssep" style="margin-top:4px;">Step 3 — Period &amp; Dates</div>
+        <div class="fr fr2"><div class="fg"><label class="fl">Date From <span class="req">*</span></label><input class="fc" type="date" value="2026-06-02"></div><div class="fg"><label class="fl">Date To <span class="req">*</span></label><input class="fc" type="date" value="2026-06-10"></div></div>
+        <div class="fr fr2"><div class="fg"><label class="fl">Sewadars Required</label><input class="fc" type="number" placeholder="e.g. 250"></div><div class="fg"><label class="fl">Shift</label><select class="fc"><option>Morning</option><option>Afternoon</option><option>Full Day</option></select></div></div>
+        <div class="fr fr1"><div class="fg"><label class="fl">Remarks</label><textarea class="fc" placeholder="Any special instructions..."></textarea></div></div>
+        <div style="display:flex;gap:8px;margin-top:4px;"><button class="btn btn-p">Submit Sewa</button><button class="btn btn-g">Cancel</button></div>
+      </div>
+    </div>
+
+    <!-- SEWA LIST -->
+    <div class="screen" id="sc-sewa-list">
+      <div class="ph"><div class="ph-t">Sewa List</div><div class="ph-r"><button class="btn btn-s">Export</button></div></div>
+      <div class="ban ban-i">All sewas — use the destination filter to separate Beas vs MC sewas.</div>
+      <div class="tw"><table class="t"><thead><tr><th>#</th><th>Sewadar Name</th><th>Area / MC</th><th>Destination</th><th>Department</th><th>Sewa Name</th><th>Date</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>Ramesh Kumar</td><td>Ludhiana</td><td><span class="tb-beas">Beas</span></td><td>Langar</td><td>Roti Making</td><td>01 Jan 2026</td><td><span class="pill pa">Active</span></td></tr>
+        <tr><td>2</td><td>Suresh Patel</td><td>Kathmandu MC</td><td><span class="tb-mc">MC</span></td><td>Langar Seva</td><td>Dish Washing</td><td>01 Jan 2026</td><td><span class="pill pa">Active</span></td></tr>
+        <tr><td>3</td><td>Harpreet Singh</td><td>Nabha MC</td><td><span class="tb-mc">MC</span></td><td>Satsang Management</td><td>Sound System</td><td>15 Jan 2026</td><td><span class="pill pa">Active</span></td></tr>
+        <tr><td>4</td><td>Vijay Sharma</td><td>Ahmedabad</td><td><span class="tb-beas">Beas</span></td><td>Security</td><td>Gate Duty</td><td>01 Jan 2026</td><td><span class="pill pa">Active</span></td></tr>
+      </tbody></table></div>
+    </div>
+
+    <!-- SIMPLE PLACEHOLDER SCREENS -->
+    <div class="screen" id="sc-areas"><div class="ph"><div class="ph-t">Areas</div><button class="btn btn-p">+ Add Area</button></div><div class="ban ban-i">Beas Areas list.</div></div>
+    <div class="screen" id="sc-centres"><div class="ph"><div class="ph-t">Centres</div><button class="btn btn-p">+ Add Centre</button></div><div class="ban ban-i">Beas Centres list.</div></div>
+    <div class="screen" id="sc-beas-dept"><div class="ph"><div class="ph-t">Beas Departments</div><button class="btn btn-p">+ Add</button></div><div class="ban ban-i">Beas Departments — separate from MC Departments.</div></div>
+    <div class="screen" id="sc-beas-sewa"><div class="ph"><div class="ph-t">Beas Sewa Names</div><button class="btn btn-p">+ Add</button></div><div class="ban ban-i">Beas Sewa Names — linked to Beas Departments only.</div></div>
+    <div class="screen" id="sc-user-list"><div class="ph"><div class="ph-t">All Users</div><button class="btn btn-p" onclick="openM('m-add-user')">+ Add User</button></div><div class="ban ban-i">All users for Zone III.</div></div>
+    <div class="screen" id="sc-mc-users"><div class="ph"><div class="ph-t">MC Users</div><button class="btn btn-p" onclick="openM('m-add-user')">+ Add MC User</button></div><div class="ban ban-i">Only Major Centre Users assigned to Zone III MCs.</div></div>
+    <div class="screen" id="sc-mc-role"><div class="ph"><div class="ph-t">MC Role &amp; Permissions</div><button class="btn btn-p">Save Permissions</button></div><div class="ban ban-i">Configure MC User access — scoped to their assigned Major Centre only.</div></div>
+    <div class="screen" id="sc-cons-report">
+      <!-- FILTER BAR -->
+      <div class="fbar">
+        <button class="adv-btn" onclick="toggleAdv()"><span class="adv-dot"></span> Advance Search &#9660;</button>
+        <button class="clear-btn" onclick="crResetAll()">Clear All</button>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;">
+          <div class="fchip">01-04-2026 to 30-05-2026 <span class="fx">&#215;</span></div>
+          <div class="fchip" id="chip-lt">List Type : All <span class="fx">&#215;</span></div>
+        </div>
+        <div style="margin-left:auto;display:flex;gap:8px;">
+          <div style="display:flex;align-items:center;gap:5px;font-size:12px;color:#555;">Show <select style="height:28px;border:1px solid #ccc;border-radius:3px;padding:0 6px;font-size:12px;"><option>50</option><option>100</option></select> Entries</div>
+          <button class="btn btn-s" style="height:32px;font-size:12px;">PRINT</button>
+          <button class="btn btn-p" style="height:32px;font-size:12px;">EXPORT &#9660;</button>
+        </div>
+      </div>
+
+      <!-- ADVANCE SEARCH PANEL -->
+      <div class="adv-panel" id="adv-panel">
+        <div style="font-size:13px;font-weight:700;text-transform:uppercase;color:#000;letter-spacing:.4px;margin-bottom:14px;">ADVANCE SEARCH</div>
+        <button style="position:absolute;top:14px;right:16px;background:none;border:none;cursor:pointer;font-size:20px;color:#555;" onclick="toggleAdv()">&#215;</button>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px 16px;">
+          <div class="fg"><label class="fl">Sewa Start Date</label><input class="fc" type="date" value="2026-04-01"></div>
+          <div class="fg"><label class="fl">Sewa End Date</label><input class="fc" type="date" value="2026-05-30"></div>
+          <div class="fg">
+            <label class="fl">List Type</label>
+            <select class="fc" id="lt-sel" onchange="onListTypeChange(this.value)">
+              <option value="all">All</option>
+              <option value="beas">Beas</option>
+              <option value="mc">Major Centre</option>
+            </select>
+            <span id="lt-badge" style="display:inline-block;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;padding:2px 8px;border-radius:3px;margin-top:3px;background:var(--success-bg);color:var(--success);">ALL — Beas + Major Centre</span>
+          </div>
+          <div class="fg"><label class="fl" id="dept-lbl">Department</label><select class="fc" id="dept-sel"><option value="">Select Department</option><option>ACCOMMODATION</option><option>ENGINEERING</option><option>F and B UNIT-1</option><option>LANGAR</option><option>MEDICAL</option><option>SECURITY</option></select></div>
+          <div class="fg"><label class="fl">Zone</label><select class="fc"><option value="">Select Zone</option><option selected>Zone III</option><option>Zone I</option><option>Zone II</option></select></div>
+          <div class="fg"><label class="fl">State</label><select class="fc"><option value="">Select State</option><option>Punjab</option><option>Gujarat</option><option>Bihar</option><option>Uttarakhand</option></select></div>
+          <div class="fg" id="area-mc-wrap"><label class="fl" id="area-mc-lbl">Area</label><select class="fc" id="area-mc-sel"><option value="">Select Area</option><option>Ahmedabad</option><option>Ajmer</option><option>Amritsar</option><option>Jalandhar</option><option>Ludhiana</option><option>Mumbai</option></select></div>
+          <div class="fg" id="centre-wrap"><label class="fl">Centre</label><select class="fc"><option value="">Select Centre</option><option>Ludhiana Centre</option><option>Adipur Centre</option><option>Jalandhar Centre</option></select></div>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:14px;padding-top:12px;border-top:1px solid #eee;">
+          <button class="btn btn-p" style="height:32px;" onclick="crApplyFilter()">Apply Filter</button>
+          <button class="btn btn-g" style="height:32px;" onclick="crResetAll()">Reset</button>
+        </div>
+      </div>
+
+      <!-- CONTEXT NOTE -->
+      <div class="ban ban-i" id="cr-ctx-note" style="margin-bottom:12px;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <span id="cr-ctx-txt">Showing <b>All</b> sewa records — Beas and Major Centre combined. Use List Type filter to view separately.</span>
+      </div>
+
+      <!-- REPORT TABLE -->
+      <div class="tw"><table class="t" id="cr-table"><thead id="cr-hdr1-row"></thead><tbody id="cr-tbody"></tbody><tfoot id="cr-tfoot"></tfoot></table></div>
+      <div class="pagi"><span id="cr-pagi">Showing all records</span><div class="pgb-wrap"><div class="pgb">&#8249;</div><div class="pgb on">1</div><div class="pgb">&#8250;</div></div></div>
+    </div>
+    <div class="screen" id="sc-no-access">
+      <div style="text-align:center;padding:70px 30px;">
+        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#8B0000" stroke-width="1.2" style="opacity:.3;margin-bottom:16px;display:block;margin-left:auto;margin-right:auto;"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+        <h3 style="font-size:16px;color:#555;margin-bottom:6px;">Access Restricted</h3>
+        <p style="font-size:13px;color:#888;max-width:340px;margin:0 auto;">Major Centre data is visible only to Zonal Admin, Zonal Coordinator, and Local Zonal Users.</p>
+      </div>
+    </div>
+
+  </div><!-- /pc -->
+</div><!-- /main -->
+
+<!-- ════ MODALS ════ -->
+<div class="mbg" id="m-add-mc"><div class="mbox lg"><div class="mhdr"><h5>New Major Centre</h5><button class="mcls" onclick="closeM('m-add-mc')">&#215;</button></div><div class="mbdy"><div class="fr fr3"><div class="fg"><label class="fl">Zone <span class="req">*</span></label><select class="fc"><option selected>Zone III</option><option>Zone I</option><option>Zone II</option></select></div><div class="fg"><label class="fl">State / Country <span class="req">*</span></label><select class="fc"><option>— Select —</option><option>Punjab</option><option>Gujarat</option><option>Bihar</option><option>Uttarakhand</option><option>Nepal</option><option>UK</option><option>USA</option></select></div><div class="fg"><label class="fl">Name <span class="req">*</span></label><input class="fc" placeholder="Enter Centre Name"></div></div><div class="fr fr2"><div class="fg"><label class="fl">File No. <span class="req">*</span></label><input class="fc" placeholder="e.g. KT/2026/012"></div><div class="fg"><label class="fl">Centre Type <span class="req">*</span></label><select class="fc"><option>MAJOR CENTRE</option></select></div></div><div class="fr fr1"><div class="fg"><label class="fl">Link Centre</label><select class="fc"><option value="">Select Link Centre</option><option>Ludhiana Centre</option><option>Adipur Centre</option><option>Jalandhar Centre</option><option>Amritsar Centre</option></select></div></div><div style="display:flex;align-items:center;gap:8px;margin-top:7px;"><input type="checkbox" checked style="width:15px;height:15px;accent-color:var(--brand);"><label style="font-size:13px;">Active</label></div></div><div class="mftr"><button class="btn btn-p">ADD</button><button class="btn btn-s" onclick="closeM('m-add-mc')">CANCEL</button></div></div></div>
+<div class="mbg" id="m-edit-mc"><div class="mbox lg"><div class="mhdr"><h5>Update Major Centre</h5><button class="mcls" onclick="closeM('m-edit-mc')">&#215;</button></div><div class="mbdy"><div class="fr fr3"><div class="fg"><label class="fl">Zone <span class="req">*</span></label><select class="fc"><option>Zone III</option></select></div><div class="fg"><label class="fl">State / Country <span class="req">*</span></label><select class="fc"><option>UK</option></select></div><div class="fg"><label class="fl">Name <span class="req">*</span></label><input class="fc" value="Haynes Park MC"></div></div><div class="fr fr2"><div class="fg"><label class="fl">File No. <span class="req">*</span></label><input class="fc" value="HP/2023/004"></div><div class="fg"><label class="fl">Centre Type <span class="req">*</span></label><select class="fc"><option>MAJOR CENTRE</option></select></div></div><div class="fr fr1"><div class="fg"><label class="fl">Link Centre</label><select class="fc"><option>Ludhiana Centre</option></select></div></div><div style="display:flex;align-items:center;gap:8px;margin-top:7px;"><input type="checkbox" checked style="width:15px;height:15px;accent-color:var(--brand);"><label style="font-size:13px;">Active</label></div></div><div class="mftr"><button class="btn btn-p">UPDATE</button><button class="btn btn-s" onclick="closeM('m-edit-mc')">CANCEL</button></div></div></div>
+<div class="mbg" id="m-view-mc"><div class="mbox sm"><div class="mhdr"><h5>Major Centre Details</h5><button class="mcls" onclick="closeM('m-view-mc')">&#215;</button></div><div class="mbdy"><table style="width:100%;font-size:13px;border-collapse:collapse;"><tr><td style="padding:7px 0;color:#666;width:40%">MC Code</td><td><b>MC-004</b></td></tr><tr style="border-top:1px solid #f5f5f5"><td style="padding:7px 0;color:#666">Name</td><td><b>Haynes Park MC</b></td></tr><tr style="border-top:1px solid #f5f5f5"><td style="padding:7px 0;color:#666">Zone</td><td>Zone III</td></tr><tr style="border-top:1px solid #f5f5f5"><td style="padding:7px 0;color:#666">State/Country</td><td>UK</td></tr><tr style="border-top:1px solid #f5f5f5"><td style="padding:7px 0;color:#666">File No.</td><td>HP/2023/004</td></tr><tr style="border-top:1px solid #f5f5f5"><td style="padding:7px 0;color:#666">Centre Type</td><td>Major Centre</td></tr><tr style="border-top:1px solid #f5f5f5"><td style="padding:7px 0;color:#666">Link Centres</td><td>Ludhiana, Adipur</td></tr><tr style="border-top:1px solid #f5f5f5"><td style="padding:7px 0;color:#666">Status</td><td><span class="pill pa">Active</span></td></tr></table></div><div class="mftr"><button class="btn btn-p" onclick="closeM('m-view-mc')">Close</button></div></div></div>
+<div class="mbg" id="m-add-req"><div class="mbox lg"><div class="mhdr"><h5>Add Sewa Requirement</h5><button class="mcls" onclick="closeM('m-add-req')">&#215;</button></div><div class="mbdy"><div style="margin-bottom:14px;"><div class="fl" style="margin-bottom:7px;">Sewa Destination <span class="req">*</span></div><div class="dtog"><button class="dto on" id="rd-beas" onclick="reqDest('beas')">&#8594; Beas</button><button class="dto" id="rd-mc" onclick="reqDest('mc')">&#8594; Major Centre</button></div><div style="font-size:11px;color:#888;margin-top:5px;" id="rd-hint">Sewadars will travel to <b>Beas</b> for sewa.</div></div><div class="fr fr2"><div class="fg"><label class="fl">Area / Major Centre <span class="req">*</span></label><div class="cswrap"><button class="csbtn" id="ams-btn" onclick="toggleDD('ams-dd')"><span id="ams-val" style="color:#999;">— Select Area or MC —</span><span style="font-size:10px;color:#888;">&#9660;</span></button><div class="csdd" id="ams-dd"><div class="cdsrch"><input type="text" placeholder="Search..." oninput="filterDD(this.value)"></div><div id="ams-opts"><div class="cdgh">&#8212; Areas &#8212;</div><div class="cdop" onclick="pickOpt('Ahmedabad','area')">Ahmedabad</div><div class="cdop" onclick="pickOpt('Ajmer','area')">Ajmer</div><div class="cdop" onclick="pickOpt('Akola','area')">Akola</div><div class="cdop" onclick="pickOpt('Amritsar','area')">Amritsar</div><div class="cdop" onclick="pickOpt('Jalandhar','area')">Jalandhar</div><div class="cdop" onclick="pickOpt('Ludhiana','area')">Ludhiana</div><div class="cdop" onclick="pickOpt('Mumbai','area')">Mumbai</div><div class="cdop" onclick="pickOpt('Nagpur','area')">Nagpur</div><div class="cdgh">&#8212; Major Centres &#8212;</div><div class="cdop mc" onclick="pickOpt('Adipur MC','mc')">Adipur MC</div><div class="cdop mc" onclick="pickOpt('Bhati MC','mc')">Bhati MC</div><div class="cdop mc" onclick="pickOpt('Dera Ghazi Khan MC','mc')">Dera Ghazi Khan MC</div><div class="cdop mc" onclick="pickOpt('Haynes Park MC','mc')">Haynes Park MC</div><div class="cdop mc" onclick="pickOpt('Kathmandu MC','mc')">Kathmandu MC</div><div class="cdop mc" onclick="pickOpt('Nabha MC','mc')">Nabha MC</div><div class="cdop mc" onclick="pickOpt('Paror MC','mc')">Paror MC</div><div class="cdop mc" onclick="pickOpt('Peach Tree MC','mc')">Peach Tree MC</div><div class="cdop mc" onclick="pickOpt('Rudrapur MC','mc')">Rudrapur MC</div><div class="cdop mc" onclick="pickOpt('Sherghati MC','mc')">Sherghati MC</div><div class="cdop mc" onclick="pickOpt('Sikanderpur MC','mc')">Sikanderpur MC</div></div></div></div></div><div class="fg"><label class="fl">Department <span class="req">*</span></label><select class="fc" id="rd-dept"><option>— Select Dept —</option><option>Langar Seva</option><option>Satsang Management</option><option>Medical Sewa</option></select></div></div><div class="fr fr2"><div class="fg"><label class="fl">Period <span class="req">*</span></label><select class="fc" id="rd-period"><option>— Select Period —</option><option>LEAN 2026</option><option>BHANDARA Q4</option></select></div><div class="fg"><label class="fl">Year</label><select class="fc"><option>2026</option><option>2025</option></select></div></div><div class="fr fr2"><div class="fg"><label class="fl">From Date <span class="req">*</span></label><input class="fc" type="date" value="2026-06-02"></div><div class="fg"><label class="fl">To Date <span class="req">*</span></label><input class="fc" type="date" value="2026-09-30"></div></div><div style="font-size:12px;font-weight:600;color:#444;margin-bottom:8px;">Sewa Name Quantities</div><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px;"><div class="fg"><label class="fl">Langar Sewa</label><input class="fc" type="number" placeholder="Qty"></div><div class="fg"><label class="fl">Satsang Sewa</label><input class="fc" type="number" placeholder="Qty"></div><div class="fg"><label class="fl">Medical Sewa</label><input class="fc" type="number" placeholder="Qty"></div></div><div class="fr fr1"><div class="fg"><label class="fl">Remarks</label><textarea class="fc" placeholder="Notes..."></textarea></div></div></div><div class="mftr"><button class="btn btn-p">ADD REQUIREMENT</button><button class="btn btn-s" onclick="closeM('m-add-req')">CANCEL</button></div></div></div>
+<div class="mbg" id="m-add-dept"><div class="mbox sm"><div class="mhdr"><h5>Add MC Department</h5><button class="mcls" onclick="closeM('m-add-dept')">&#215;</button></div><div class="mbdy"><div class="fr fr2"><div class="fg"><label class="fl">Code <span class="req">*</span></label><input class="fc" placeholder="MCD-06"></div><div class="fg"><label class="fl">Name <span class="req">*</span></label><input class="fc" placeholder="Department name"></div></div><div class="fr fr1"><div class="fg"><label class="fl">Applicable MCs</label><select class="fc"><option>All Major Centres</option><option>Kathmandu MC</option><option>Nabha MC</option><option>Bhati MC</option></select></div></div><div class="togr"><div class="tog on" onclick="this.classList.toggle('on')"></div><span style="font-size:12px;color:#555;">Active</span></div></div><div class="mftr"><button class="btn btn-p">ADD</button><button class="btn btn-s" onclick="closeM('m-add-dept')">CANCEL</button></div></div></div>
+<div class="mbg" id="m-add-sewa"><div class="mbox sm"><div class="mhdr"><h5>Add MC Sewa Name</h5><button class="mcls" onclick="closeM('m-add-sewa')">&#215;</button></div><div class="mbdy"><div class="fr fr2"><div class="fg"><label class="fl">Sewa Name <span class="req">*</span></label><input class="fc" placeholder="Enter sewa name"></div><div class="fg"><label class="fl">MC Department <span class="req">*</span></label><select class="fc"><option value="">— Select —</option><option>Langar Seva</option><option>Satsang Management</option><option>Medical Sewa</option></select></div></div><div class="fr fr2"><div class="fg"><label class="fl">Type <span class="req">*</span></label><select class="fc"><option>Physical</option><option>Technical</option><option>Administrative</option><option>Medical</option></select></div><div class="fg"><label class="fl">Status</label><div class="togr" style="margin-top:8px;"><div class="tog on" onclick="this.classList.toggle('on')"></div><span style="font-size:12px;color:#555;">Active</span></div></div></div></div><div class="mftr"><button class="btn btn-p">ADD</button><button class="btn btn-s" onclick="closeM('m-add-sewa')">CANCEL</button></div></div></div>
+<div class="mbg" id="m-add-user"><div class="mbox"><div class="mhdr"><h5>Add User</h5><button class="mcls" onclick="closeM('m-add-user')">&#215;</button></div><div class="mbdy"><div class="ssep">User Details</div><div class="fr fr2"><div class="fg"><label class="fl">Full Name <span class="req">*</span></label><input class="fc" placeholder="Full name"></div><div class="fg"><label class="fl">Email <span class="req">*</span></label><input class="fc" type="email" placeholder="user@srs.org"></div></div><div class="fr fr2"><div class="fg"><label class="fl">Password <span class="req">*</span></label><input class="fc" type="password"></div><div class="fg"><label class="fl">Phone</label><input class="fc" placeholder="+91 XXXXXXXXXX"></div></div><div class="ssep">Role &amp; Assignment</div><div class="fr fr2"><div class="fg"><label class="fl">Role <span class="req">*</span></label><select class="fc" onchange="document.getElementById('mcaf').style.display=this.value==='mc'?'flex':'none'"><option value="">— Select Role —</option><option>Admin</option><option>Beas User</option><option value="mc">Major Centre User</option><option>Report Viewer</option></select></div><div class="fg" id="mcaf" style="display:none;"><label class="fl">Assign Major Centre <span class="req">*</span></label><select class="fc"><option value="">— Select MC —</option><option>Adipur MC</option><option>Bhati MC</option><option>Haynes Park MC</option><option>Kathmandu MC</option><option>Nabha MC</option><option>Paror MC</option><option>Peach Tree MC</option><option>Rudrapur MC</option><option>Sherghati MC</option></select></div></div><div class="togr"><div class="tog on" onclick="this.classList.toggle('on')"></div><span style="font-size:12px;color:#555;">Active</span></div></div><div class="mftr"><button class="btn btn-p">ADD</button><button class="btn btn-s" onclick="closeM('m-add-user')">CANCEL</button></div></div></div>
+<div class="mbg" id="m-del"><div class="mbox sm"><div class="mhdr"><h5>Confirm Deletion</h5><button class="mcls" onclick="closeM('m-del')">&#215;</button></div><div class="mbdy" style="padding:0 20px 16px;font-size:13px;">Are you sure you want to delete <b>Haynes Park MC</b>? This action cannot be undone.</div><div class="mftr"><button class="btn btn-p" onclick="closeM('m-del')">Confirm</button><button class="btn btn-s" onclick="closeM('m-del')">Cancel</button></div></div></div>
+
+</div></div><!-- /app /cvs -->
+
+<!-- ROLE SWITCHER -->
+<div class="rsw">
+  <span>View as:</span>
+  <button class="rsb on" onclick="switchRole('zonal',this)">Zonal Admin</button>
+  <button class="rsb" onclick="switchRole('state',this)">State User</button>
+  <button class="rsb" onclick="switchRole('area',this)">Area User</button>
+  <button class="rsb" onclick="switchRole('centre',this)">Centre User</button>
+</div>
+
+<script>
+/* ════ SCREEN CONFIG ════ */
+const SC={
+  dashboard:    {t:'Dashboard',bc:'<b>Dashboard</b>',ctx:false,nav:'ns-dash',acc:null},
+  'mc-list':    {t:'Major Centre List',bc:'Masters › <b>Major Centre Master</b> › Major Centres',ctx:true,nav:'nc-mc-list',acc:'mc'},
+  'mc-dept':    {t:'MC Department Master',bc:'Masters › <b>Major Centre Master</b> › MC Departments',ctx:true,nav:'nc-mc-dept',acc:'mc'},
+  'mc-sewa':    {t:'MC Sewa Names',bc:'Masters › <b>Major Centre Master</b> › MC Sewa Names',ctx:true,nav:'nc-mc-sewa',acc:'mc'},
+  'period':     {t:'Period Manager',bc:'Masters › Beas Master › <b>Periods</b>',ctx:false,nav:'nc-period',acc:'beas'},
+  'areas':      {t:'Areas',bc:'Masters › Beas Master › <b>Areas</b>',ctx:false,nav:'nc-areas',acc:'beas'},
+  'centres':    {t:'Centres',bc:'Masters › Beas Master › <b>Centres</b>',ctx:false,nav:'nc-centres',acc:'beas'},
+  'beas-dept':  {t:'Beas Departments',bc:'Masters › Beas Master › <b>Beas Departments</b>',ctx:false,nav:'nc-beas-dept',acc:'beas'},
+  'beas-sewa':  {t:'Beas Sewa Names',bc:'Masters › Beas Master › <b>Sewa Names</b>',ctx:false,nav:'nc-beas-sewa',acc:'beas'},
+  'sewa-req':   {t:'Sewa Requirement Manager',bc:'Sewa Management › <b>Sewa Requirements</b>',ctx:false,nav:'nc-sewa-req',acc:'sewamgmt'},
+  'create-sewa':{t:'Create Sewa',bc:'Sewa Management › <b>Create Sewa</b>',ctx:false,nav:'nc-create-sewa',acc:'sewamgmt'},
+  'sewa-list':  {t:'Sewa List',bc:'Sewa Management › <b>Sewa List</b>',ctx:false,nav:'nc-sewa-list',acc:'sewamgmt'},
+  'user-list':  {t:'All Users',bc:'User Management › <b>All Users</b>',ctx:false,nav:'nc-user-list',acc:'users'},
+  'mc-users':   {t:'MC Users',bc:'User Management › <b>MC Users</b>',ctx:false,nav:'nc-mc-users',acc:'users'},
+  'mc-role':    {t:'MC Role and Permissions',bc:'User Management › <b>MC Role</b>',ctx:false,nav:'nc-mc-role',acc:'users'},
+  'cons-report':{t:'Department Wise Report',bc:'Reports › <b>Department Wise Report</b>',ctx:false,nav:'nc-cons-report',acc:'rep'},
+  'no-access':  {t:'Access Restricted',bc:'<b>No Access</b>',ctx:false,nav:null,acc:null},
+};
+const MC_SCREENS=['mc-list','mc-dept','mc-sewa'];
+let cRole='zonal', cSc='mc-list';
+
+function go(id){
+  if(cRole!=='zonal'&&MC_SCREENS.includes(id)){id='no-access';}
+  const c=SC[id];if(!c)return;cSc=id;
+  // hide all screens
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  const el=document.getElementById('sc-'+id);if(el)el.classList.add('active');
+  document.getElementById('pgt').textContent=c.t;
+  document.getElementById('pgbc').innerHTML=c.bc;
+  // ctx tabs
+  document.getElementById('ctx').classList.toggle('show',c.ctx);
+  document.querySelectorAll('.ctab').forEach(t=>t.classList.remove('on'));
+  const ct=document.getElementById('ct-'+id);if(ct)ct.classList.add('on');
+  // nav highlight
+  document.querySelectorAll('.nch').forEach(n=>n.classList.remove('active'));
+  document.querySelectorAll('.ns').forEach(n=>n.classList.remove('active'));
+  if(c.nav){const n=document.getElementById(c.nav);if(n)n.classList.add('active');}
+  // open the right accordion
+  if(c.acc){
+    document.querySelectorAll('.nc').forEach(n=>n.classList.remove('show'));
+    document.querySelectorAll('.nt').forEach(n=>n.classList.remove('open'));
+    const nc=document.getElementById('nc-'+c.acc);
+    const nt=document.getElementById('nt-'+c.acc);
+    if(nc)nc.classList.add('show');
+    if(nt){nt.classList.add('open');if(c.acc==='mc')nt.classList.add('mc-red');}
+  }
+  if(id==='dashboard')document.getElementById('ns-dash').classList.add('active');
+  // init period manager when navigating to it
+  if(id==='period')pmInit();
+  if(id==='cons-report'){crRenderTable('all');}
+}
+
+function acc(k){
+  const nt=document.getElementById('nt-'+k),nc=document.getElementById('nc-'+k);
+  if(!nc)return;
+  const was=nc.classList.contains('show');
+  document.querySelectorAll('.nc').forEach(c=>c.classList.remove('show'));
+  document.querySelectorAll('.nt').forEach(t=>{t.classList.remove('open');});
+  if(!was){nc.classList.add('show');nt.classList.add('open');}
+  if(k==='mc')nt.classList.add('mc-red');
+}
+
+function openM(id){document.getElementById(id).classList.add('show');}
+function closeM(id){document.getElementById(id).classList.remove('show');}
+document.querySelectorAll('.mbg').forEach(b=>b.addEventListener('click',e=>{if(e.target===b)b.classList.remove('show');}));
+
+
+/* ROLE SWITCHER */
+const ROLES={
+  zonal:{p:'Zone III — Zonal Admin',a:'ZA',n:'Zonal Admin',mc:true},
+  state:{p:'Zone III — State User',a:'SU',n:'State User',mc:false},
+  area: {p:'Zone III — Area User',a:'AU',n:'Area User',mc:false},
+  centre:{p:'Zone III — Centre User',a:'CU',n:'Centre User',mc:false},
+};
+function switchRole(r,btn){
+  cRole=r;const m=ROLES[r];
+  document.getElementById('zpill').textContent=m.p;
+  document.getElementById('av').textContent=m.a;
+  document.getElementById('un').textContent=m.n;
+  document.querySelectorAll('.rsb').forEach(b=>b.classList.remove('on'));
+  if(btn)btn.classList.add('on');
+  if(!m.mc&&MC_SCREENS.includes(cSc))go('no-access');else go(cSc);
+}
+
+/* SEWA DEST TOGGLE */
+function sewaDest(d){
+  document.getElementById('sd-beas').classList.toggle('on',d==='beas');
+  document.getElementById('sd-mc').classList.toggle('on',d==='mc');
+  document.getElementById('sd-beas-f').style.display=d==='beas'?'block':'none';
+  document.getElementById('sd-mc-f').style.display=d==='mc'?'block':'none';
+}
+
+/* REQ DEST TOGGLE */
+function reqDest(d){
+  document.getElementById('rd-beas').classList.toggle('on',d==='beas');
+  document.getElementById('rd-mc').classList.toggle('on',d==='mc');
+  document.getElementById('rd-hint').innerHTML=d==='beas'?'Sewadars will travel to <b>Beas</b> for sewa.':'Sewadars will travel to a <b>Major Centre</b> for sewa.';
+  const dept=document.getElementById('rd-dept');
+  dept.innerHTML=d==='beas'?'<option>— Select Dept —</option><option>Langar</option><option>Security</option><option>Medical</option>':'<option>— Select MC Dept —</option><option>Langar Seva</option><option>Satsang Management</option><option>Medical Sewa</option>';
+  const per=document.getElementById('rd-period');
+  per.innerHTML=d==='beas'?'<option>— Select Period —</option><option>LEAN 2026</option><option>BHANDARA Q4</option>':'<option>— Select MC Period —</option><option>MC LEAN 2026</option><option>MC BHANDARA Q4</option>';
+}
+
+/* FILTER REQ TABLE */
+function filterReq(d){
+  ['all','beas','mc'].forEach(x=>document.getElementById('rfilt-'+x).classList.toggle('on',x===d));
+  document.querySelectorAll('#req-tbody tr').forEach(r=>{r.style.display=(d==='all'||r.dataset.dest===d)?'':'none';});
+}
+
+/* GROUPED DROPDOWN */
+function toggleDD(id){document.getElementById(id).classList.toggle('open');}
+function pickOpt(val,type){
+  const v=document.getElementById('ams-val');
+  v.textContent=val;v.style.color=type==='mc'?'#5a3ea8':'#333';
+  document.getElementById('ams-dd').classList.remove('open');
+}
+function filterDD(q){
+  document.querySelectorAll('#ams-opts .cdop').forEach(o=>{
+    o.style.display=o.textContent.toLowerCase().includes(q.toLowerCase())?'':'none';
+  });
+}
+document.addEventListener('click',e=>{if(!e.target.closest('.cswrap'))document.querySelectorAll('.csdd').forEach(d=>d.classList.remove('open'));});
+
+/* ════ PERIOD MANAGER ════ */
+const MN=['January','February','March','April','May','June','July','August','September','October','November','December'];
+const DN=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+const PM_TYPES={
+  beas:[
+    {key:'lean', label:'Lean Days',             bg:'#b8dff5',c:'#0a5a8a'},
+    {key:'act1', label:'Active1 - winter Days',  bg:'#ffd580',c:'#7a5200'},
+    {key:'act2', label:'Active2 - summer Days',  bg:'#ffb347',c:'#7a3000'},
+    {key:'peak1',label:'Peak1 - winter Days',    bg:'#f4a0a0',c:'#7a0000'},
+    {key:'peak2',label:'Peak2 - summer Days',    bg:'#90d090',c:'#1a5000'},
+  ],
+  mc:[
+    {key:'lean', label:'MC Lean Days',             bg:'#b8dff5',c:'#0a5a8a'},
+    {key:'act1', label:'MC Active - winter Days',  bg:'#ffd580',c:'#7a5200'},
+    {key:'act2', label:'MC Active - summer Days',  bg:'#ffb347',c:'#7a3000'},
+    {key:'peak1',label:'MC Peak - winter Days',    bg:'#f4a0a0',c:'#7a0000'},
+    {key:'peak2',label:'MC Peak - summer Days',    bg:'#90d090',c:'#1a5000'},
+  ]
+};
+const pmData={};
+let pmMode='beas',pmYear=2026,pmActiveType=null;
+let pmInited=false;
+
+function rng(a,b){const r=[];for(let i=a;i<=b;i++)r.push(i);return r;}
+
+function pmSeedData(){
+  const entries=[
+    ...rng(1,31).map(d=>`beas-2026-0-${d}:lean`),
+    ...rng(1,7).map(d=>`beas-2026-1-${d}:act1`),
+    ...rng(8,14).map(d=>`beas-2026-1-${d}:peak1`),
+    ...rng(15,21).map(d=>`beas-2026-1-${d}:act1`),
+    ...rng(22,28).map(d=>`beas-2026-1-${d}:lean`),
+    ...rng(1,7).map(d=>`beas-2026-2-${d}:lean`),
+    ...rng(8,14).map(d=>`beas-2026-2-${d}:act2`),
+    ...rng(15,21).map(d=>`beas-2026-2-${d}:peak2`),
+    ...rng(22,31).map(d=>`beas-2026-2-${d}:lean`),
+    ...rng(1,10).map(d=>`beas-2026-3-${d}:lean`),
+    ...rng(11,17).map(d=>`beas-2026-3-${d}:act1`),
+    ...rng(18,22).map(d=>`beas-2026-3-${d}:peak1`),
+    ...rng(23,30).map(d=>`beas-2026-3-${d}:act2`),
+    ...rng(1,9).map(d=>`beas-2026-4-${d}:act2`),
+    ...rng(10,16).map(d=>`beas-2026-4-${d}:peak2`),
+    ...rng(17,22).map(d=>`beas-2026-4-${d}:act2`),
+    ...rng(23,31).map(d=>`beas-2026-4-${d}:lean`),
+    ...rng(1,30).map(d=>`beas-2026-5-${d}:lean`),
+    ...rng(1,31).map(d=>`beas-2026-6-${d}:peak2`),
+    ...rng(1,31).map(d=>`beas-2026-7-${d}:peak2`),
+    ...rng(1,14).map(d=>`beas-2026-8-${d}:act2`),
+    ...rng(15,30).map(d=>`beas-2026-8-${d}:lean`),
+    ...rng(1,17).map(d=>`beas-2026-9-${d}:lean`),
+    ...rng(18,31).map(d=>`beas-2026-9-${d}:act1`),
+    ...rng(1,7).map(d=>`beas-2026-10-${d}:act1`),
+    ...rng(8,21).map(d=>`beas-2026-10-${d}:peak1`),
+    ...rng(22,30).map(d=>`beas-2026-10-${d}:act1`),
+    ...rng(1,31).map(d=>`beas-2026-11-${d}:lean`),
+    // MC 2026
+    ...rng(1,31).map(d=>`mc-2026-0-${d}:lean`),
+    ...rng(1,28).map(d=>`mc-2026-1-${d}:lean`),
+    ...rng(1,15).map(d=>`mc-2026-2-${d}:lean`),
+    ...rng(16,31).map(d=>`mc-2026-2-${d}:act1`),
+    ...rng(1,10).map(d=>`mc-2026-3-${d}:act1`),
+    ...rng(11,20).map(d=>`mc-2026-3-${d}:peak1`),
+    ...rng(21,30).map(d=>`mc-2026-3-${d}:act2`),
+    ...rng(1,19).map(d=>`mc-2026-4-${d}:act2`),
+    ...rng(20,31).map(d=>`mc-2026-4-${d}:lean`),
+    ...rng(1,30).map(d=>`mc-2026-5-${d}:lean`),
+    ...rng(1,31).map(d=>`mc-2026-6-${d}:peak2`),
+    ...rng(1,31).map(d=>`mc-2026-7-${d}:peak2`),
+    ...rng(1,30).map(d=>`mc-2026-8-${d}:act2`),
+    ...rng(1,31).map(d=>`mc-2026-9-${d}:act1`),
+    ...rng(1,30).map(d=>`mc-2026-10-${d}:peak1`),
+    ...rng(1,31).map(d=>`mc-2026-11-${d}:lean`),
+  ];
+  entries.forEach(e=>{const[k,v]=e.split(':');pmData[k]=v;});
+}
+
+function pmInit(){
+  if(!pmInited){pmSeedData();pmInited=true;}
+  pmSetMode('beas');
+}
+
+function pmSetMode(m){
+  pmMode=m;pmActiveType=null;
+  document.getElementById('mto-beas').classList.toggle('on',m==='beas');
+  document.getElementById('mto-mc').classList.toggle('on',m==='mc');
+  const badge=document.getElementById('pm-badge');
+  badge.className=m==='beas'?'ml-beas':'ml-mc';
+  badge.textContent=m==='beas'?'BEAS':'MAJOR CENTRE';
+  document.getElementById('pm-save-txt').innerHTML=
+    `Setting: <b>${m==='beas'?'BEAS':'MAJOR CENTRE'}</b>  ·  Year: <b>${pmYear}</b>  ·  Click dates to assign period types`;
+  pmRenderLegend();pmRenderPtBtns();pmRenderCal();
+}
+
+function pmRenderLegend(){
+  const types=PM_TYPES[pmMode];
+  const counts={lean:0,act1:0,act2:0,peak1:0,peak2:0};
+  for(let m=0;m<12;m++){const dim=new Date(pmYear,m+1,0).getDate();for(let d=1;d<=dim;d++){const k=`${pmMode}-${pmYear}-${m}-${d}`;const p=pmData[k];if(p&&counts[p]!==undefined)counts[p]++;}}
+  document.getElementById('pm-legend').innerHTML=types.map(p=>`
+    <div class="leg-item">
+      <div class="leg-pill" style="background:${p.bg};color:${p.c};">${counts[p.key]||0}</div>
+      <div class="leg-lbl">${p.label}<small>${pmMode==='mc'?'Major Centre Calendar':'Beas Calendar'}</small></div>
+    </div>`).join('');
+}
+
+function pmRenderPtBtns(){
+  const types=PM_TYPES[pmMode];
+  document.getElementById('pm-pt-btns').innerHTML=types.map(p=>`
+    <button class="ptb" id="ptb-${p.key}" style="background:${p.bg};color:${p.c};" onclick="pmSelTypeClick('${p.key}')">${p.label}</button>`).join('');
+  pmUpdateHint();
+}
+
+function pmSelTypeClick(key){
+  pmActiveType=pmActiveType===key?null:key;
+  document.querySelectorAll('.ptb').forEach(b=>b.classList.remove('on'));
+  if(pmActiveType){const b=document.getElementById('ptb-'+pmActiveType);if(b)b.classList.add('on');}
+  pmUpdateHint();
+}
+
+function pmClearType(){pmActiveType=null;document.querySelectorAll('.ptb').forEach(b=>b.classList.remove('on'));pmUpdateHint();}
+
+function pmUpdateHint(){
+  const hint=document.getElementById('pm-hint');
+  if(!pmActiveType){hint.textContent='No type selected — click a period type first';hint.style.color='#888';}
+  else{const p=PM_TYPES[pmMode].find(x=>x.key===pmActiveType);hint.textContent=`✔ "${p.label}" selected — click dates to assign`;hint.style.color=p.c;}
+}
+
+function pmRenderCal(){
+  const grid=document.getElementById('pm-cal');
+  const today=new Date();
+  grid.innerHTML='';
+  for(let m=0;m<12;m++){
+    const fd=new Date(pmYear,m,1).getDay(),dim=new Date(pmYear,m+1,0).getDate();
+    const div=document.createElement('div');div.className='cal-month';
+    let h=`<div class="cmhdr">${MN[m]}</div><div class="cdhdr">${DN.map(d=>`<span>${d}</span>`).join('')}</div><div class="cdays">`;
+    for(let i=0;i<fd;i++)h+=`<div class="cd empty"></div>`;
+    for(let d=1;d<=dim;d++){
+      const dt=new Date(pmYear,m,d);
+      const isPast=dt<today&&dt.toDateString()!==today.toDateString();
+      const isToday=dt.toDateString()===today.toDateString();
+      const pk=`${pmMode}-${pmYear}-${m}-${d}`;
+      const pt=pmData[pk];
+      const pObj=pt?PM_TYPES[pmMode].find(x=>x.key===pt):null;
+      let style=pObj&&!isPast?`background:${pObj.bg};color:${pObj.c};`:'';
+      if(isPast)style='color:#ccc;';
+      let cls='cd';
+      if(isPast)cls+=' past';
+      if(isToday)cls+=' today';
+      const tipTxt=isPast?'Past date':pObj?pObj.label:'Click to assign period';
+      h+=`<div class="${cls}" style="${style}" onmouseenter="showTip(event,'${tipTxt}')" onmouseleave="hideTip()" onclick="pmDayClick(${m},${d},${isPast})">${d}</div>`;
+    }
+    h+='</div>';div.innerHTML=h;grid.appendChild(div);
+  }
+  pmRenderLegend();
+}
+
+function pmDayClick(m,d,isPast){
+  if(isPast){showToast('Past dates cannot be edited.',true);return;}
+  if(!pmActiveType){showToast('Select a period type above first.',true);return;}
+  const k=`${pmMode}-${pmYear}-${m}-${d}`;
+  if(pmData[k]===pmActiveType)delete pmData[k];else pmData[k]=pmActiveType;
+  pmRenderCal();
+}
+
+function pmChgYr(d){
+  pmYear+=d;
+  document.getElementById('pm-yr').textContent=pmYear;
+  document.getElementById('pm-save-txt').innerHTML=`Setting: <b>${pmMode==='beas'?'BEAS':'MAJOR CENTRE'}</b>  ·  Year: <b>${pmYear}</b>  ·  Click dates to assign period types`;
+  pmRenderCal();
+}
+function pmCurYear(){pmYear=new Date().getFullYear();document.getElementById('pm-yr').textContent=pmYear;pmRenderCal();}
+function pmSave(){showToast(`Period settings for ${pmMode==='beas'?'BEAS':'MAJOR CENTRE'} — ${pmYear} saved successfully.`);}
+function pmReset(){Object.keys(pmData).forEach(k=>{if(k.startsWith(`${pmMode}-${pmYear}-`))delete pmData[k];});pmRenderCal();showToast(`Calendar reset for ${pmMode==='beas'?'BEAS':'MAJOR CENTRE'} — ${pmYear}.`);}
+
+/* TOOLTIP */
+function showTip(e,m){const t=document.getElementById('tip');t.textContent=m;t.style.display='block';t.style.left=(e.clientX+12)+'px';t.style.top=(e.clientY+12)+'px';}
+function hideTip(){document.getElementById('tip').style.display='none';}
+
+/* TOAST */
+function showToast(msg,warn){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.style.background=warn?'#7a3000':'#2F5E00';
+  t.className='toast';void t.offsetWidth;t.classList.add('show');
+  setTimeout(()=>t.className='toast',2600);
+}
+
+
+/* ════ CONSOLIDATED REPORT ════ */
+const CR_BEAS=[
+  {id:1,name:'ACCOMMODATION',sched:89,unsched:31786,m:2862,f:3817,tot:6679},
+  {id:2,name:'CAR SEVA',sched:89,unsched:3036,m:4917,f:0,tot:7953},
+  {id:3,name:'CENTRAL STORE',sched:0,unsched:1402,m:1402,f:853,tot:2255},
+  {id:4,name:'ENGINEERING',sched:109,unsched:2276,m:3525,f:0,tot:5801},
+  {id:5,name:'F and B UNIT-1',sched:314,unsched:2865,m:4232,f:0,tot:7097},
+  {id:6,name:'LANGAR',sched:250,unsched:1076,m:2089,f:0,tot:3165},
+  {id:7,name:'MEDICAL',sched:3,unsched:54,m:54,f:0,tot:54},
+  {id:8,name:'RAILWAY',sched:337,unsched:3593,m:5620,f:0,tot:9213},
+  {id:9,name:'SECURITY',sched:73,unsched:1131,m:1131,f:2937,tot:4068},
+  {id:10,name:'SHOPPING COMPLEX',sched:0,unsched:12287,m:12287,f:10145,tot:22432},
+];
+const CR_MC=[
+  {id:1,name:'LANGAR SEVA',sched:210,unsched:1240,m:1440,f:780,tot:2220},
+  {id:2,name:'SATSANG MANAGEMENT',sched:180,unsched:870,m:980,f:590,tot:1570},
+  {id:3,name:'MAINTENANCE AND INFRA',sched:90,unsched:440,m:420,f:110,tot:530},
+  {id:4,name:'MEDICAL SEWA',sched:45,unsched:210,m:190,f:185,tot:375},
+  {id:5,name:'GUEST HOUSE MGMT',sched:30,unsched:120,m:95,f:60,tot:155},
+  {id:6,name:'REGISTRATION DESK',sched:60,unsched:240,m:200,f:100,tot:300},
+];
+const CR_AREAS=['Select Area','Ahmedabad','Ajmer','Akola','Amritsar','Jalandhar','Ludhiana','Mumbai','Nagpur'];
+const CR_MCS=['Select Major Centre','Adipur MC','Bhati MC','Dera Ghazi Khan MC','Haynes Park MC','Kathmandu MC','Nabha MC','Paror MC','Peach Tree MC','Rudrapur MC','Sherghati MC','Sikanderpur MC'];
+let crLT='all';
+
+function toggleAdv(){document.getElementById('adv-panel').classList.toggle('show');}
+
+function onListTypeChange(val){
+  crLT=val;
+  const badge=document.getElementById('lt-badge');
+  const styles={all:'background:var(--success-bg);color:var(--success);',beas:'background:var(--info-bg);color:var(--info-txt);',mc:'background:#ede8f8;color:#5a3ea8;'};
+  const labels={all:'ALL — Beas + Major Centre',beas:'BEAS ONLY',mc:'MAJOR CENTRE ONLY'};
+  badge.style.cssText=styles[val];badge.textContent=labels[val];
+  const lbl=document.getElementById('area-mc-lbl');
+  const sel=document.getElementById('area-mc-sel');
+  const cw=document.getElementById('centre-wrap');
+  const ds=document.getElementById('dept-sel');
+  const dl=document.getElementById('dept-lbl');
+  if(val==='mc'){
+    lbl.textContent='Major Centre';
+    sel.innerHTML=CR_MCS.map(m=>`<option>${m}</option>`).join('');
+    cw.style.display='none';
+    dl.textContent='MC Department';
+    ds.innerHTML='<option value="">Select MC Department</option><option>LANGAR SEVA</option><option>SATSANG MANAGEMENT</option><option>MAINTENANCE AND INFRA</option><option>MEDICAL SEWA</option>';
+  } else {
+    lbl.textContent='Area';
+    sel.innerHTML=CR_AREAS.map(a=>`<option>${a}</option>`).join('');
+    cw.style.display='';
+    dl.textContent='Department';
+    ds.innerHTML='<option value="">Select Department</option><option>ACCOMMODATION</option><option>ENGINEERING</option><option>F and B UNIT-1</option><option>LANGAR</option><option>MEDICAL</option><option>SECURITY</option>';
+  }
+}
+
+function crApplyFilter(){
+  crRenderTable(crLT);
+  const chip=document.getElementById('chip-lt');
+  const labels={all:'List Type : All',beas:'List Type : Beas',mc:'List Type : Major Centre'};
+  chip.innerHTML=`${labels[crLT]} <span class="fx">&#215;</span>`;
+  const note=document.getElementById('cr-ctx-note');
+  const txt=document.getElementById('cr-ctx-txt');
+  note.className='ban';
+  if(crLT==='mc'){note.classList.add('ban-i');note.style.background='#ede8f8';note.style.borderColor='#c4b6f0';note.style.color='#3a2080';txt.innerHTML='Showing <b>Major Centre</b> sewa records only — MC Department-wise breakdown.';}
+  else if(crLT==='beas'){note.classList.add('ban-i');txt.innerHTML='Showing <b>Beas</b> sewa records only — Department-wise breakdown.';}
+  else{note.classList.add('ban-i');txt.innerHTML='Showing <b>All</b> sewa records — Beas and Major Centre combined.';}
+  crUpdateTitle(crLT);
+  document.getElementById('adv-panel').classList.remove('show');
+}
+
+function crUpdateTitle(val){
+  const titles={all:'DEPARTMENT-WISE SEWA REPORT — ALL (01/04/2026 TO 30/05/2026)',beas:'DEPARTMENT-WISE SEWA REPORT — BEAS (01/04/2026 TO 30/05/2026)',mc:'MAJOR CENTRE DEPT-WISE SEWA REPORT (01/04/2026 TO 30/05/2026)'};
+  document.getElementById('pgt').textContent=titles[val];
+}
+
+function crRenderTable(lt){
+  const thead=document.querySelector('#cr-table thead');
+  const tbody=document.getElementById('cr-tbody');
+  const tfoot=document.getElementById('cr-tfoot');
+  let rows='',totSch=0,totUn=0,totM=0,totF=0,totT=0;
+
+  if(lt==='mc'){
+    thead.innerHTML=`<tr class="hdr1"><th rowspan="2" class="left">#</th><th rowspan="2" class="left">MC Department</th><th colspan="2" class="tc">Count</th><th colspan="3" class="tc">Gender</th><th rowspan="2" class="tc">Total</th></tr><tr class="hdr2"><th>Scheduled</th><th>Unscheduled</th><th>Males</th><th>+</th><th>Females</th></tr>`;
+    CR_MC.forEach((d,i)=>{totSch+=d.sched;totUn+=d.unsched;totM+=d.m;totF+=d.f;totT+=d.tot;rows+=`<tr><td>${i+1}</td><td><b>${d.name}</b> <span class="mc-bdg">MC</span></td><td class="tc">${d.sched}</td><td class="tc">${d.unsched.toLocaleString()}</td><td class="num">${d.m.toLocaleString()}</td><td class="tc" style="color:#888;">+</td><td class="num">${d.f.toLocaleString()}</td><td class="num"><b>${d.tot.toLocaleString()}</b></td></tr>`;});
+    tfoot.innerHTML=`<tr><td colspan="2" class="left">TOTAL</td><td class="tc">${totSch}</td><td class="tc">${totUn.toLocaleString()}</td><td>${totM.toLocaleString()}</td><td></td><td>${totF.toLocaleString()}</td><td>${totT.toLocaleString()}</td></tr>`;
+    document.getElementById('cr-pagi').textContent=`Showing 1–${CR_MC.length} of ${CR_MC.length} records (Major Centre)`;
+  } else if(lt==='beas'){
+    thead.innerHTML=`<tr class="hdr1"><th rowspan="2" class="left">#</th><th rowspan="2" class="left">Department</th><th rowspan="2" class="tc">Scheduled</th><th rowspan="2" class="tc">Unscheduled</th><th colspan="3" class="tc">Gender</th><th rowspan="2" class="tc">Total</th></tr><tr class="hdr2"><th>Males</th><th>+</th><th>Females</th></tr>`;
+    CR_BEAS.forEach((d,i)=>{totSch+=d.sched;totUn+=d.unsched;totM+=d.m;totF+=d.f;totT+=d.tot;rows+=`<tr><td>${i+1}</td><td><b>${d.name}</b> <span class="beas-bdg">Beas</span></td><td class="tc">${d.sched}</td><td class="tc">${d.unsched.toLocaleString()}</td><td class="num">${d.m.toLocaleString()}</td><td class="tc" style="color:#888;">+</td><td class="num">${d.f.toLocaleString()}</td><td class="num"><b>${d.tot.toLocaleString()}</b></td></tr>`;});
+    tfoot.innerHTML=`<tr><td colspan="2" class="left">TOTAL</td><td class="tc">${totSch}</td><td class="tc">${totUn.toLocaleString()}</td><td>${totM.toLocaleString()}</td><td></td><td>${totF.toLocaleString()}</td><td>${totT.toLocaleString()}</td></tr>`;
+    document.getElementById('cr-pagi').textContent=`Showing 1–${CR_BEAS.length} of ${CR_BEAS.length} records (Beas)`;
+  } else {
+    thead.innerHTML=`<tr class="hdr1"><th rowspan="2" class="left">#</th><th rowspan="2" class="left">Department</th><th rowspan="2" class="tc">Type</th><th rowspan="2" class="tc">Scheduled</th><th rowspan="2" class="tc">Unscheduled</th><th colspan="3" class="tc">Gender</th><th rowspan="2" class="tc">Total</th></tr><tr class="hdr2"><th>Males</th><th>+</th><th>Females</th></tr>`;
+    rows+=`<tr style="background:#f0f4f8;"><td colspan="9" style="padding:6px 10px;font-size:11px;font-weight:700;text-transform:uppercase;color:var(--info-txt);letter-spacing:.4px;">&#8212; Beas Departments &#8212;</td></tr>`;
+    CR_BEAS.forEach((d,i)=>{totSch+=d.sched;totUn+=d.unsched;totM+=d.m;totF+=d.f;totT+=d.tot;rows+=`<tr><td>${i+1}</td><td><b>${d.name}</b></td><td><span class="beas-bdg">Beas</span></td><td class="tc">${d.sched}</td><td class="tc">${d.unsched.toLocaleString()}</td><td class="num">${d.m.toLocaleString()}</td><td class="tc" style="color:#888;">+</td><td class="num">${d.f.toLocaleString()}</td><td class="num"><b>${d.tot.toLocaleString()}</b></td></tr>`;});
+    rows+=`<tr style="background:#f5f0fe;"><td colspan="9" style="padding:6px 10px;font-size:11px;font-weight:700;text-transform:uppercase;color:#5a3ea8;letter-spacing:.4px;">&#8212; Major Centre Departments &#8212;</td></tr>`;
+    CR_MC.forEach((d,i)=>{totSch+=d.sched;totUn+=d.unsched;totM+=d.m;totF+=d.f;totT+=d.tot;rows+=`<tr><td>${CR_BEAS.length+i+1}</td><td><b>${d.name}</b></td><td><span class="mc-bdg">MC</span></td><td class="tc">${d.sched}</td><td class="tc">${d.unsched.toLocaleString()}</td><td class="num">${d.m.toLocaleString()}</td><td class="tc" style="color:#888;">+</td><td class="num">${d.f.toLocaleString()}</td><td class="num"><b>${d.tot.toLocaleString()}</b></td></tr>`;});
+    tfoot.innerHTML=`<tr><td colspan="3" class="left">GRAND TOTAL (Beas + MC)</td><td class="tc">${totSch}</td><td class="tc">${totUn.toLocaleString()}</td><td>${totM.toLocaleString()}</td><td></td><td>${totF.toLocaleString()}</td><td>${totT.toLocaleString()}</td></tr>`;
+    document.getElementById('cr-pagi').textContent=`Showing 1–${CR_BEAS.length+CR_MC.length} of ${CR_BEAS.length+CR_MC.length} records (All)`;
+  }
+  tbody.innerHTML=rows;
+}
+
+function crResetAll(){
+  document.getElementById('lt-sel').value='all';
+  onListTypeChange('all');crLT='all';
+  crRenderTable('all');
+  document.getElementById('chip-lt').innerHTML='List Type : All <span class="fx">&#215;</span>';
+  document.getElementById('cr-ctx-note').className='ban ban-i';
+  document.getElementById('cr-ctx-note').style='';
+  document.getElementById('cr-ctx-txt').innerHTML='Showing <b>All</b> sewa records — Beas and Major Centre combined.';
+  document.getElementById('adv-panel').classList.remove('show');
+}
+
+/* INIT */
+go('mc-list');
+document.getElementById('nc-mc').classList.add('show');
+document.getElementById('nt-mc').classList.add('open','mc-red');
+</script>
+</body>
+</html>
